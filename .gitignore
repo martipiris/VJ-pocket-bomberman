@@ -17,17 +17,17 @@
 mono_crash.*
 
 # Build results
-[Dd]ebug/
+pocket-bomberman/[Dd]ebug/*.exe
 [Dd]ebugPublic/
-[Rr]elease/
+pocket-bomberman/[Rr]elease/
 [Rr]eleases/
 x64/
 x86/
-[Ww][Ii][Nn]32/
+pocket-bomberman/[Ww][Ii][Nn]32/
 [Aa][Rr][Mm]/
 [Aa][Rr][Mm]64/
 bld/
-[Bb]in/
+pocket-bomberman/[Bb]in/
 [Oo]bj/
 [Oo]ut/
 [Ll]og/
@@ -97,6 +97,10 @@ StyleCopReport.xml
 *.pidb
 *.svclog
 *.scc
+*.tlog
+*.exe
+*.recipe
+*.idb
 
 # Chutzpah Test files
 _Chutzpah*
