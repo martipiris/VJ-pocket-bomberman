@@ -4,6 +4,7 @@
 
 #include <GLFW/glfw3.h>
 #include "Scene.h"
+#include "StartingScene.h"
 
 
 #define SCREEN_WIDTH 640
@@ -17,7 +18,7 @@ class Game
 {
 
 private:
-	Game() {}
+	Game();
 	
 public:
 	static Game &instance()
@@ -44,7 +45,7 @@ private:
 	bool bPlay; // Continue to play game?
 	bool keys[GLFW_KEY_LAST+1]; // Store key states so that 
 							    // we can have access at any time
-	Scene scene;
+	Scene* scene;
 
 };
 
