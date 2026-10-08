@@ -1,39 +1,41 @@
-#ifndef _SCENE_INCLUDE
-#define _SCENE_INCLUDE
+#ifndef _BUBBLE_INCLUDE
+#define _BUBBLE_INCLUDE
 
 
 #include <glm/glm.hpp>
 #include "ShaderProgram.h"
+#include "TileMap.h"
+#include "Player.h"
+#include "Game.h"
 
 
 // Scene contains all the entities of our game.
 // It is responsible for updating and render them.
 
 
-class Scene
+class Bubble
 {
 
 public:
-	Scene();
-	~Scene();
+	Bubble();
+	~Bubble();
 
 	void init();
 	void update(int deltaTime);
 	void render();
 
 private:
-	virtual void renderObjects() = 0;
-	virtual void initObjects() = 0;
-	virtual void updateObjects() = 0;
+	void initShaders();
 
-protected:
-	ShaderProgram texProgram, simpleProgram;
+private:
+	TileMap *map;
+	Player *player;
+	ShaderProgram texProgram;
 	float currentTime;
 	glm::mat4 projection;
 
-	void initShaders();
 };
 
 
-#endif // _SCENE_INCLUDE
+#endif // _BUBBLE_INCLUDE
 

@@ -1,8 +1,8 @@
 #include <iostream>
 #include <cmath>
 #include <glm/gtc/matrix_transform.hpp>
-#include "Scene.h"
-#include "Game.h"
+#include "Bubble.h"
+
 
 
 #define SCREEN_X 32
@@ -12,30 +12,41 @@
 #define INIT_PLAYER_Y_TILES 25
 
 
-Scene::Scene() {}
+Bubble::Bubble()
+{
+	map = NULL;
+	player = NULL;
+}
 
-Scene::~Scene()
+Bubble::~Bubble()
 {
 	texProgram.free();
-	// Eliminar objectes d'aquesta escena
+	if(map != NULL)
+		delete map;
+	if(player != NULL)
+		delete player;
 }
 
 
-void Scene::init()
+void Bubble::init()
 {
 	initShaders();
-	initObjects();
+	map = TileMap::createTileMap("levels/level01.txt", glm::vec2(SCREEN_X, SCREEN_Y), texProgram);
+	player = new Player();
+	player->init(glm::ivec2(SCREEN_X, SCREEN_Y), texProgram);
+	player->setPosition(glm::vec2(INIT_PLAYER_X_TILES * map->getTileSize(), INIT_PLAYER_Y_TILES * map->getTileSize()));
+	player->setTileMap(map);
 	projection = glm::ortho(0.f, float(SCREEN_WIDTH), float(SCREEN_HEIGHT), 0.f);
 	currentTime = 0.0f;
 }
 
-void Scene::update(int deltaTime)
+void Bubble::update(int deltaTime)
 {
 	currentTime += deltaTime;
-	updateObjects();
+	player->update(deltaTime);
 }
 
-void Scene::render()
+void Bubble::render()
 {
 	glm::mat4 modelview;
 
@@ -45,11 +56,11 @@ void Scene::render()
 	modelview = glm::mat4(1.0f);
 	texProgram.setUniformMatrix4f("modelview", modelview);
 	texProgram.setUniform2f("texCoordDispl", 0.f, 0.f);
-
-	renderObjects();
+	map->render();
+	player->render();
 }
 
-void Scene::initShaders()
+void Bubble::initShaders()
 {
 	Shader vShader, fShader;
 
@@ -65,18 +76,6 @@ void Scene::initShaders()
 		cout << "Fragment Shader Error" << endl;
 		cout << "" << fShader.log() << endl << endl;
 	}
-
-	simpleProgram.init();
-	simpleProgram.addShader(vShader);
-	simpleProgram.addShader(fShader);
-	simpleProgram.link();
-	if (!simpleProgram.isLinked())
-	{
-		cout << "Shader Linking Error" << endl;
-		cout << "" << simpleProgram.log() << endl << endl;
-	}
-	simpleProgram.bindFragmentOutput("outColor");
-
 	texProgram.init();
 	texProgram.addShader(vShader);
 	texProgram.addShader(fShader);

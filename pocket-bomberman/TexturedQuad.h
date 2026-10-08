@@ -24,6 +24,7 @@ private:
 	GLuint vao;
 	GLuint vbo;
 	GLint posLocation, texCoordLocation;
+	ShaderProgram *shaderProgram;
 
 };
 

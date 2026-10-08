@@ -213,6 +213,8 @@ void Text::createTextureAtlas()
 	textureAtlas.generateMipmap();
 	textureAtlas.setWrapS(GL_CLAMP_TO_EDGE);
 	textureAtlas.setWrapT(GL_CLAMP_TO_EDGE);
+	textureAtlas.setMinFilter(GL_NEAREST);
+	textureAtlas.setMagFilter(GL_NEAREST);
 }
 
 

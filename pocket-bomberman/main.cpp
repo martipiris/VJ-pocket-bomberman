@@ -8,10 +8,13 @@
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
-	if (action == GLFW_PRESS)
+
+	if (action == GLFW_PRESS) {
 		Game::instance().keyPressed(key);
-	else if (action == GLFW_RELEASE)
+	}
+	else if (action == GLFW_RELEASE) {
 		Game::instance().keyReleased(key);
+	}
 }
 
 void cursor_position_callback(GLFWwindow* window, double xpos, double ypos)
@@ -37,13 +40,19 @@ int main(void)
 	if (!glfwInit())
 		return -1;
 
+	/* Set window hints for visibility and other properties */
+	glfwWindowHint(GLFW_VISIBLE, GLFW_TRUE);
+	glfwWindowHint(GLFW_FOCUSED, GLFW_TRUE);
+
 	/* Create a windowed mode window and its OpenGL context */
-	window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Hello World", NULL, NULL);
+	window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Pocket Borgerman", NULL, NULL);
 	if (!window)
 	{
 		glfwTerminate();
 		return -1;
 	}
+
+	glfwShowWindow(window);
 
 	/* Set window initial position */
 	glfwSetWindowPos(window, 100, 100);

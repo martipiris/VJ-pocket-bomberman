@@ -13,6 +13,8 @@ TexturedQuad *TexturedQuad::createTexturedQuad(glm::vec2 geom[2], glm::vec2 texC
 
 TexturedQuad::TexturedQuad(glm::vec2 geom[2], glm::vec2 texCoords[2], ShaderProgram &program)
 {
+	shaderProgram = &program;
+	
 	float vertices[24] = {geom[0].x, geom[0].y, texCoords[0].x, texCoords[0].y, 
 												geom[1].x, geom[0].y, texCoords[1].x, texCoords[0].y, 
 												geom[1].x, geom[1].y, texCoords[1].x, texCoords[1].y, 
@@ -31,11 +33,13 @@ TexturedQuad::TexturedQuad(glm::vec2 geom[2], glm::vec2 texCoords[2], ShaderProg
 
 void TexturedQuad::render(const Texture &tex) const
 {
+	shaderProgram->use();
 	glEnable(GL_TEXTURE_2D);
 	tex.use();
 	glBindVertexArray(vao);
 	glEnableVertexAttribArray(posLocation);
 	glEnableVertexAttribArray(texCoordLocation);
+	shaderProgram->setUniform1i("tex", 0);
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 	glDisable(GL_TEXTURE_2D);
 }
