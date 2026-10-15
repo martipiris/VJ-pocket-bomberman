@@ -11,28 +11,20 @@
 #define INIT_PLAYER_X_TILES 4
 #define INIT_PLAYER_Y_TILES 25
 
-
 Scene::Scene() {}
-
-Scene::~Scene()
-{
-	texProgram.free();
-	// Eliminar objectes d'aquesta escena
-}
-
 
 void Scene::init()
 {
-	initShaders();
-	initObjects();
 	projection = glm::ortho(0.f, float(SCREEN_WIDTH), float(SCREEN_HEIGHT), 0.f);
 	currentTime = 0.0f;
+	initShaders();
+	initObjects();
 }
 
 void Scene::update(int deltaTime)
 {
 	currentTime += deltaTime;
-	updateObjects();
+	updateObjects(deltaTime);
 }
 
 void Scene::render()
@@ -47,6 +39,11 @@ void Scene::render()
 	texProgram.setUniform2f("texCoordDispl", 0.f, 0.f);
 
 	renderObjects();
+}
+
+void Scene::deleteScene() {
+	texProgram.free();
+	deleteObjects();
 }
 
 void Scene::initShaders()
@@ -69,24 +66,24 @@ void Scene::initShaders()
 	simpleProgram.init();
 	simpleProgram.addShader(vShader);
 	simpleProgram.addShader(fShader);
+	simpleProgram.bindFragmentOutput("outColor");
 	simpleProgram.link();
 	if (!simpleProgram.isLinked())
 	{
 		cout << "Shader Linking Error" << endl;
 		cout << "" << simpleProgram.log() << endl << endl;
 	}
-	simpleProgram.bindFragmentOutput("outColor");
 
 	texProgram.init();
 	texProgram.addShader(vShader);
 	texProgram.addShader(fShader);
+	texProgram.bindFragmentOutput("outColor");
 	texProgram.link();
 	if(!texProgram.isLinked())
 	{
 		cout << "Shader Linking Error" << endl;
 		cout << "" << texProgram.log() << endl << endl;
 	}
-	texProgram.bindFragmentOutput("outColor");
 	vShader.free();
 	fShader.free();
 }

@@ -3,7 +3,7 @@
 
 
 #include <glm/glm.hpp>
-#include "ShaderProgram.h"
+#include "libs/ShaderProgram.h"
 
 
 // Scene contains all the entities of our game.
@@ -15,16 +15,17 @@ class Scene
 
 public:
 	Scene();
-	~Scene();
 
 	void init();
 	void update(int deltaTime);
 	void render();
+	void deleteScene();
 
 private:
 	virtual void renderObjects() = 0;
 	virtual void initObjects() = 0;
-	virtual void updateObjects() = 0;
+	virtual void updateObjects(int deltaTime) = 0;
+	virtual void deleteObjects() = 0;
 
 protected:
 	ShaderProgram texProgram, simpleProgram;

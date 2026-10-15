@@ -12,6 +12,9 @@
 
 #define MAIN_FONT "fonts/ByteBounce.ttf"
 
+#define CONFIRM_KEY GLFW_KEY_Z
+#define RETURN_KEY GLFW_KEY_X
+
 // Game is a singleton (a class with a single instance) that represents our whole application
 
 
@@ -41,6 +44,8 @@ public:
 
 	bool getKey(int key) const;
 	bool isKeyPressedOnce(int key);
+
+	void changeScene(Scene* newScene);
 
 private:
 	bool bPlay; // Continue to play game?

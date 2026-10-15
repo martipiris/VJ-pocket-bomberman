@@ -2,9 +2,10 @@
 #define _STARTING_SCENE_INCLUDE
 
 #include "Scene.h"
-#include "Text.h"
-#include "TexturedQuad.h"
+#include "libs/Text.h"
+#include "libs/TexturedQuad.h"
 #include "Game.h"
+#include "Level1.h"
 
 class StartingScene : public Scene
 {
@@ -12,9 +13,10 @@ class StartingScene : public Scene
 public:
 	StartingScene() {};
 
-	void renderObjects();
 	void initObjects();
-	void updateObjects();
+	void renderObjects();
+	void updateObjects(int deltaTime);
+	void deleteObjects();
 
 private:
 	string menuOptionsText[3] = { "Jugar", "Instr.", "Credits" };

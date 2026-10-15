@@ -11,34 +11,36 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="AnimKeyframes.h" />
-    <ClInclude Include="Bubble.h" />
+    <ClInclude Include="Level1.h" />
+    <ClInclude Include="LevelScene.h" />
     <ClInclude Include="Game.h" />
+    <ClInclude Include="libs\AnimKeyframes.h" />
+    <ClInclude Include="libs\Shader.h" />
+    <ClInclude Include="libs\ShaderProgram.h" />
+    <ClInclude Include="libs\Sprite.h" />
+    <ClInclude Include="libs\Text.h" />
+    <ClInclude Include="libs\Texture.h" />
+    <ClInclude Include="libs\TexturedQuad.h" />
+    <ClInclude Include="libs\TileMap.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Scene.h" />
-    <ClInclude Include="Shader.h" />
-    <ClInclude Include="ShaderProgram.h" />
-    <ClInclude Include="Sprite.h" />
     <ClInclude Include="StartingScene.h" />
-    <ClInclude Include="Text.h" />
-    <ClInclude Include="Texture.h" />
-    <ClInclude Include="TexturedQuad.h" />
-    <ClInclude Include="TileMap.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Bubble.cpp" />
+    <ClCompile Include="Level1.cpp" />
+    <ClCompile Include="LevelScene.cpp" />
     <ClCompile Include="Game.cpp" />
+    <ClCompile Include="libs\Shader.cpp" />
+    <ClCompile Include="libs\ShaderProgram.cpp" />
+    <ClCompile Include="libs\Sprite.cpp" />
+    <ClCompile Include="libs\Text.cpp" />
+    <ClCompile Include="libs\Texture.cpp" />
+    <ClCompile Include="libs\TexturedQuad.cpp" />
+    <ClCompile Include="libs\TileMap.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Scene.cpp" />
-    <ClCompile Include="Shader.cpp" />
-    <ClCompile Include="ShaderProgram.cpp" />
-    <ClCompile Include="Sprite.cpp" />
     <ClCompile Include="StartingScene.cpp" />
-    <ClCompile Include="Text.cpp" />
-    <ClCompile Include="Texture.cpp" />
-    <ClCompile Include="TexturedQuad.cpp" />
-    <ClCompile Include="TileMap.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{A5C82172-5379-49C6-871B-74E31A722017}</ProjectGuid>

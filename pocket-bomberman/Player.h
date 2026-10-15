@@ -2,8 +2,8 @@
 #define _PLAYER_INCLUDE
 
 
-#include "Sprite.h"
-#include "TileMap.h"
+#include "libs/Sprite.h"
+#include "libs/TileMap.h"
 
 
 // Player is basically a Sprite that represents the player. As such it has

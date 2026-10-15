@@ -6,10 +6,6 @@ void StartingScene::renderObjects() {
 	menu_bg->render(texs[1]);
 
 	glm::mat4 modelview;
-	texProgram.use();
-	texProgram.setUniformMatrix4f("projection", projection);
-	texProgram.setUniform4f("color", 1.0f, 1.0f, 1.0f, 1.0f);
-
 	modelview = glm::translate(glm::mat4(1.0f), glm::vec3(0.f, 50.f*selectedOption, 0.f));
 
 	texProgram.setUniformMatrix4f("modelview", modelview);
@@ -27,8 +23,6 @@ void StartingScene::renderObjects() {
 }
 
 void StartingScene::initObjects() {
-	Scene::initShaders();
-
 	// Copyright text
 	if (!bottomText.init(MAIN_FONT)) {
 		printf("Error importing font!");
@@ -48,6 +42,12 @@ void StartingScene::initObjects() {
 	glm::vec2 geom[2] = { glm::vec2(75.f, 0.f), glm::vec2(SCREEN_WIDTH - 75, SCREEN_HEIGHT * 0.4375) };
 	texCoords[0] = glm::vec2(0.f, 0.f); texCoords[1] = glm::vec2(1.f, 1.f);
 	title = TexturedQuad::createTexturedQuad(geom, texCoords, texProgram);
+
+	// Menu background
+	geom[0] = glm::vec2(220.f, 189.f); geom[1] = glm::vec2(SCREEN_WIDTH - 25, 400);
+
+	texCoords[0] = glm::vec2(0.f, 0.f); texCoords[1] = glm::vec2(1.f, 1.f);
+	menu_bg = TexturedQuad::createTexturedQuad(geom, texCoords, texProgram);
 
 	texs[0].loadFromFile("images/title.png", TEXTURE_PIXEL_FORMAT_RGBA);
 	texs[0].setMagFilter(GL_NEAREST);
@@ -71,11 +71,40 @@ void StartingScene::initObjects() {
 	texs[2].setMagFilter(GL_NEAREST);
 }
 
-void StartingScene::updateObjects() {
+void StartingScene::updateObjects(int deltaTime) {
 
 	if (Game::instance().isKeyPressedOnce(GLFW_KEY_DOWN)) {
 		selectedOption = (selectedOption + 1) % 3;
 	} else if (Game::instance().isKeyPressedOnce(GLFW_KEY_UP)) {
 		selectedOption = (selectedOption + 2) % 3; 
+	}
+
+	if (Game::instance().isKeyPressedOnce(CONFIRM_KEY)) {
+		switch (selectedOption) {
+			case 0:
+				Game::instance().changeScene(new Level1());
+				break;
+			case 1:
+				break;
+			case 2:
+				break;
+		}
+	}
+}
+
+void StartingScene::deleteObjects() {
+	
+	if (title != NULL)
+		delete title;
+
+	if (menu_bg != NULL)
+		delete menu_bg;
+
+	if (selectorBomb != NULL)
+		delete selectorBomb;
+
+	for (int i = 0; i < 3; i++) {
+		if (menuOptions[i] != NULL)
+			delete menuOptions[i];
 	}
 }

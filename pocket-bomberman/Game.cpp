@@ -26,6 +26,17 @@ void Game::render()
 	scene->render();
 }
 
+void Game::changeScene(Scene* newScene) {
+	if (scene != nullptr) {
+		scene->deleteScene();
+		delete scene;
+		scene = nullptr;
+	}
+
+	scene = newScene;
+	scene->init();
+}
+
 void Game::keyPressed(int key)
 {
 	if(key == GLFW_KEY_ESCAPE) // Escape code
