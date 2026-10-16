@@ -2,9 +2,10 @@
 #define _GAME_INCLUDE
 
 
+#include <GL/glew.h>
 #include <GLFW/glfw3.h>
+
 #include "Scene.h"
-#include "StartingScene.h"
 
 
 #define SCREEN_WIDTH 480
@@ -16,7 +17,6 @@
 #define RETURN_KEY GLFW_KEY_X
 
 // Game is a singleton (a class with a single instance) that represents our whole application
-
 
 class Game
 {
@@ -54,7 +54,6 @@ private:
 
 	Scene* scene;
 };
-
 
 #endif // _GAME_INCLUDE
 

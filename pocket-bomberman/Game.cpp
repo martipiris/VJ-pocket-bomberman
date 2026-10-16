@@ -1,7 +1,7 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include "Game.h"
-
+#include "StartingScene.h"
 
 Game::Game() {}
 
@@ -9,7 +9,7 @@ void Game::init()
 {
 	bPlay = true;
 	glClearColor(1, 1, 1, 1);
-	scene = dynamic_cast<Scene*>(new StartingScene);
+	scene = new StartingScene();
 	scene->init();
 }
 

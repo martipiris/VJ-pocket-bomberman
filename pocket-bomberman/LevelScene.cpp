@@ -3,9 +3,6 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include "LevelScene.h"
 
-#define SCREEN_OFFSET_X 16
-#define SCREEN_OFFSET_Y 16
-
 LevelScene::LevelScene(const std::string &levelFile)
 	: m_levelFile(levelFile), map(nullptr)
 {
@@ -25,20 +22,32 @@ void LevelScene::initObjects()
 		player.init(glm::ivec2(SCREEN_OFFSET_X, SCREEN_OFFSET_Y), texProgram);
 		player.setPosition(getInitialPlayerTilePos());
 		player.setTileMap(map);
+
+		cam = new Camera(SCREEN_WIDTH, SCREEN_HEIGHT, map->getMapPixelSize(), player.getPosition());
 	}
 	onLevelInit();
 }
 
 void LevelScene::updateObjects(int deltaTime)
 {
+	// Actualizar jugador primero (posicionará su sprite)
 	player.update(deltaTime);
+
+	// Actualizar cámara para centrarla en el jugador
+	cam->setTarget(player.getPosition());
+	cam->update();
+
 	onLevelUpdate(deltaTime);
 }
 
 void LevelScene::renderObjects()
 {
+	glm::mat4 view = cam->getViewMatrix();
+	texProgram.setUniformMatrix4f("modelview", view);
+	simpleProgram.setUniformMatrix4f("modelview", view);
+
 	if (map) map->render();
-	player.render();
+	player.render(view);
 	onLevelRender();
 }
 

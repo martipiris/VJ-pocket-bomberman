@@ -1,12 +1,15 @@
 #ifndef _LEVEL_SCENE_INCLUDE
 #define _LEVEL_SCENE_INCLUDE
 
-
 #include <string>
 #include <glm/glm.hpp>
 #include "Scene.h"
 #include "libs/TileMap.h"
 #include "Player.h"
+#include "Camera.h"
+
+#define SCREEN_OFFSET_X 16
+#define SCREEN_OFFSET_Y 16
 
 class LevelScene : public Scene {
 public:
@@ -32,7 +35,9 @@ protected:
 	Player player;
 
 	int playerInitialTileX = 4;
-	int playerInitialTileY = 25;
+	int playerInitialTileY = 24;
+
+	Camera *cam;
 
 private:
 	std::string m_levelFile;
