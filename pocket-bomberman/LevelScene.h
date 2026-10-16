@@ -21,8 +21,8 @@ private:
 
 protected:
 	virtual std::string getLevelFile() const;
-	virtual glm::ivec2 getInitialPlayerTilePos() const;
-	virtual glm::vec2 getMapMinCoords() const;
+
+	glm::vec2 getInitialPlayerTilePos() const;
 
 	virtual void onLevelInit() {}
 	virtual void onLevelUpdate(int deltaTime) {}
@@ -30,6 +30,9 @@ protected:
 
 	TileMap *map = nullptr;
 	Player player;
+
+	int playerInitialTileX = 4;
+	int playerInitialTileY = 25;
 
 private:
 	std::string m_levelFile;

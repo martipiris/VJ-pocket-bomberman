@@ -3,8 +3,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include "LevelScene.h"
 
-#define SCREEN_X 32
-#define SCREEN_Y 32
+#define SCREEN_OFFSET_X 16
+#define SCREEN_OFFSET_Y 16
 
 LevelScene::LevelScene(const std::string &levelFile)
 	: m_levelFile(levelFile), map(nullptr)
@@ -19,11 +19,12 @@ LevelScene::~LevelScene()
 void LevelScene::initObjects()
 {
 	const std::string file = getLevelFile();
-	const glm::vec2 minCoords = getMapMinCoords();
+	const glm::vec2 minCoords = glm::vec2(SCREEN_OFFSET_X, SCREEN_OFFSET_Y);
 	map = TileMap::createTileMap(file, minCoords, texProgram);
 	if (map) {
+		player.init(glm::ivec2(SCREEN_OFFSET_X, SCREEN_OFFSET_Y), texProgram);
+		player.setPosition(getInitialPlayerTilePos());
 		player.setTileMap(map);
-		player.init(getInitialPlayerTilePos(), texProgram);
 	}
 	onLevelInit();
 }
@@ -52,10 +53,10 @@ std::string LevelScene::getLevelFile() const {
 	return m_levelFile;
 }
 
-glm::ivec2 LevelScene::getInitialPlayerTilePos() const {
-	return glm::ivec2(4, 25);
-}
-
-glm::vec2 LevelScene::getMapMinCoords() const {
-	return glm::vec2(0.f, 0.f);
+glm::vec2 LevelScene::getInitialPlayerTilePos() const {
+	if (map == nullptr) {
+		std::cerr << "Error: map is null in getInitialPlayerTilePos()" << std::endl;
+		return glm::vec2(0.f, 0.f);
+	}
+	return glm::vec2(playerInitialTileX*map->getTileSize(), playerInitialTileY * map->getTileSize());
 }

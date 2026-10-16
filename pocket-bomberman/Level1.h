@@ -14,10 +14,6 @@ public:
 	~Level1() override = default;
 
 protected:
-	glm::ivec2 getInitialPlayerTilePos() const override {
-		return glm::ivec2(30, 25);
-	}
-
 	void onLevelInit() override {
 	}
 
