@@ -26,7 +26,7 @@ Player::~Player() {
 void Player::init(const glm::ivec2 &tileMapPos, ShaderProgram &shaderProgram) {
 	velY = 0.f;
 	onGround = false;
-	spritesheet.loadFromFile("images/bub.png", TEXTURE_PIXEL_FORMAT_RGBA);
+	spritesheet.loadFromFile("images/player.png", TEXTURE_PIXEL_FORMAT_RGBA);
 	sprite = Sprite::createSprite(SIZE_PLAYER, glm::vec2(0.25f, 0.25f), &spritesheet, &shaderProgram);
 	sprite->setNumberAnimations(4);
 
@@ -57,7 +57,6 @@ void Player::update(int deltaTime) {
 
 	sprite->update(deltaTime);
 
-	const float horizSpeed = 2.0f;
 	if (Game::instance().getKey(GLFW_KEY_LEFT)) {
 		if (sprite->animation() != MOVE_LEFT) sprite->changeAnimation(MOVE_LEFT);
 		posPlayerF.x -= horizSpeed * dt;
