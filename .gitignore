@@ -366,4 +366,4 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 
-./pocket-bomberman/Debug/pocket-bomberman.vcxproj.FileListAbsolute.txt
+/pocket-bomberman/Debug/pocket-bomberman.vcxproj.FileListAbsolute.txt
