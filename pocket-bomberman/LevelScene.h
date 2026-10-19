@@ -35,7 +35,7 @@ protected:
 	Player player;
 
 	int playerInitialTileX = 4;
-	int playerInitialTileY = 24;
+	int playerInitialTileY = 25;
 
 	Camera *cam;
 

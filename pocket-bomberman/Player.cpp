@@ -4,7 +4,9 @@
 #include "Game.h"
 
 enum PlayerAnims {
-	STAND_LEFT, STAND_RIGHT, MOVE_LEFT, MOVE_RIGHT
+	STAND_LEFT, MOVE_LEFT, JUMP_LEFT, FALL_LEFT, 
+	STAND_RIGHT, MOVE_RIGHT, JUMP_RIGHT, FALL_RIGHT,
+	WIN, DIE, EXPLODE, 
 };
 
 Player::Player()
@@ -27,24 +29,39 @@ void Player::init(const glm::ivec2 &tileMapPos, ShaderProgram &shaderProgram) {
 	velY = 0.f;
 	onGround = false;
 	spritesheet.loadFromFile("images/player.png", TEXTURE_PIXEL_FORMAT_RGBA);
-	sprite = Sprite::createSprite(SIZE_PLAYER, glm::vec2(0.25f, 0.25f), &spritesheet, &shaderProgram);
-	sprite->setNumberAnimations(4);
+	sprite = Sprite::createSprite(SIZE_PLAYER, glm::vec2(0.2f, 0.2f), &spritesheet, &shaderProgram);
+	sprite->setNumberAnimations(12);
 
 	sprite->setAnimationSpeed(STAND_LEFT, 8);
 	sprite->addKeyframe(STAND_LEFT, glm::vec2(0.f, 0.f));
 
-	sprite->setAnimationSpeed(STAND_RIGHT, 8);
-	sprite->addKeyframe(STAND_RIGHT, glm::vec2(0.25f, 0.f));
-
 	sprite->setAnimationSpeed(MOVE_LEFT, 8);
+	sprite->addKeyframe(MOVE_LEFT, glm::vec2(0.2f, 0.f));
 	sprite->addKeyframe(MOVE_LEFT, glm::vec2(0.f, 0.f));
-	sprite->addKeyframe(MOVE_LEFT, glm::vec2(0.f, 0.25f));
-	sprite->addKeyframe(MOVE_LEFT, glm::vec2(0.f, 0.5f));
+	sprite->addKeyframe(MOVE_LEFT, glm::vec2(0.4f, 0.f));
+	sprite->addKeyframe(MOVE_LEFT, glm::vec2(0.f, 0.f));
+
+	sprite->setAnimationSpeed(JUMP_LEFT, 8);
+	sprite->addKeyframe(JUMP_LEFT, glm::vec2(0.6f, 0.f));
+
+	sprite->setAnimationSpeed(FALL_LEFT, 8);
+	sprite->addKeyframe(FALL_LEFT, glm::vec2(0.8f, 0.f));
+
+
+	sprite->setAnimationSpeed(STAND_RIGHT, 8);
+	sprite->addKeyframe(STAND_RIGHT, glm::vec2(0.f, 0.2f));
 
 	sprite->setAnimationSpeed(MOVE_RIGHT, 8);
-	sprite->addKeyframe(MOVE_RIGHT, glm::vec2(0.25f, 0.f));
-	sprite->addKeyframe(MOVE_RIGHT, glm::vec2(0.25f, 0.25f));
-	sprite->addKeyframe(MOVE_RIGHT, glm::vec2(0.25f, 0.5f));
+	sprite->addKeyframe(MOVE_RIGHT, glm::vec2(0.2f, 0.2f));
+	sprite->addKeyframe(MOVE_RIGHT, glm::vec2(0.0f, 0.2f));
+	sprite->addKeyframe(MOVE_RIGHT, glm::vec2(0.4f, 0.2f));
+	sprite->addKeyframe(MOVE_RIGHT, glm::vec2(0.f, 0.2f));
+
+	sprite->setAnimationSpeed(JUMP_RIGHT, 8);
+	sprite->addKeyframe(JUMP_RIGHT, glm::vec2(0.6f, 0.2f));
+
+	sprite->setAnimationSpeed(FALL_RIGHT, 8);
+	sprite->addKeyframe(FALL_RIGHT, glm::vec2(0.8f, 0.2f));
 
 	sprite->changeAnimation(0);
 	tileMapDispl = tileMapPos;
@@ -60,6 +77,7 @@ void Player::update(int deltaTime) {
 	if (Game::instance().getKey(GLFW_KEY_LEFT)) {
 		if (sprite->animation() != MOVE_LEFT) sprite->changeAnimation(MOVE_LEFT);
 		posPlayerF.x -= horizSpeed * dt;
+		printf("Left pressed\n");
 	} else if (Game::instance().getKey(GLFW_KEY_RIGHT)) {
 		if (sprite->animation() != MOVE_RIGHT) sprite->changeAnimation(MOVE_RIGHT);
 		posPlayerF.x += horizSpeed * dt;
@@ -112,6 +130,9 @@ void Player::update(int deltaTime) {
 
 	posPlayer = glm::ivec2(int(posPlayerF.x), int(posPlayerF.y));
 	sprite->setPosition(glm::vec2(float(tileMapDispl.x + posPlayer.x), float(tileMapDispl.y + posPlayer.y)));
+
+	printf(sprite->animation() == MOVE_LEFT ? "MOVE_LEFT\n" : sprite->animation() == MOVE_RIGHT ? "MOVE_RIGHT\n" : sprite->animation() == STAND_LEFT ? "STAND_LEFT\n" : sprite->animation() == STAND_RIGHT ? "STAND_RIGHT\n" : sprite->animation() == JUMP_LEFT ? "JUMP_LEFT\n" : sprite->animation() == JUMP_RIGHT ? "JUMP_RIGHT\n" : sprite->animation() == FALL_LEFT ? "FALL_LEFT\n" : sprite->animation() == FALL_RIGHT ? "FALL_RIGHT\n" : "UNKNOWN\n");
+
 }
 
 void Player::render(const glm::mat4 &view) {
