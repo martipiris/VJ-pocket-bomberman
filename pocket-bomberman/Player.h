@@ -32,7 +32,8 @@ private:
 	// parámetros
 	const float gravity = 0.6f;       
 	const float jumpSpeed =  30.0f;  
-	const float maxFallSpeed = 18.0f; 
+	const float maxFallSpeed = 18.0f;
+	const float horizSpeed = 6.0f;
 
 	// Render/anim
 	Texture spritesheet;

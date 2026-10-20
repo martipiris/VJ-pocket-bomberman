@@ -2,6 +2,7 @@
 #include <fstream>
 #include <sstream>
 #include <vector>
+#include <algorithm>
 #include "TileMap.h"
 
 
@@ -190,23 +191,34 @@ bool TileMap::collisionMoveRight(const glm::ivec2 &pos, const glm::ivec2 &size) 
 
 bool TileMap::collisionMoveDown(const glm::ivec2 &pos, const glm::ivec2 &size, int *posY) const
 {
-	int x0, x1, y;
+	const int x0 = std::max(0, pos.x / tileSize);
+	const int x1 = std::min(mapSize.x - 1, (pos.x + size.x - 1) / tileSize);
 
-	x0 = pos.x / tileSize;
-	x1 = (pos.x + size.x - 1) / tileSize;
-	y = (pos.y + size.y - 1) / tileSize;
-
-	if (y < 0 || y >= mapSize.y)
+	if (x0 > x1)
 		return false;
 
-	if (x0 < 0) x0 = 0;
-	if (x1 >= mapSize.x) x1 = mapSize.x - 1;
+	const int bottom = pos.y + size.y;
 
-	for (int x = x0; x <= x1; x++)
+	const int currentRow = (bottom - 1) / tileSize;
+
+	const int supportRow = bottom / tileSize;
+
+	for (int x = x0; x <= x1; ++x)
 	{
-		if (map[y * mapSize.x + x] != 0)
+		if (currentRow >= 0 &&
+			currentRow < mapSize.y &&
+			map[currentRow * mapSize.x + x] != 0)
 		{
-			*posY = tileSize * y - size.y;
+			*posY = currentRow * tileSize - size.y;
+			return true;
+		}
+
+		if (bottom % tileSize == 0 &&
+			supportRow >= 0 &&
+			supportRow < mapSize.y &&
+			map[supportRow * mapSize.x + x] != 0)
+		{
+			*posY = supportRow * tileSize - size.y;
 			return true;
 		}
 	}
