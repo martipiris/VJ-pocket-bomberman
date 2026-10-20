@@ -1,9 +1,12 @@
 #ifndef _GUI_INCLUDE
 #define _GUI_INCLUDE
 
+#include "libs/Quad.h"
 #include "libs/TexturedQuad.h"
 #include "libs/Text.h"
+#include "libs/ShaderProgram.h"
 
+#include "Game.h"
 
 struct Stat {
 	TexturedQuad icon;
@@ -13,14 +16,17 @@ struct Stat {
 
 class GUI {
 public:
-	GUI();
+	GUI(ShaderProgram& simpleProgram) : program(simpleProgram) {};
 	~GUI();
+
+	void init();
 
 	void render();
 private:
-	TexturedQuad background;
-
+	Quad *background;
 	Stat* stats[5];
+
+	ShaderProgram program;
 };
 
 #endif // _GUI_INCLUDE

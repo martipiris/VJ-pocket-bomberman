@@ -18,13 +18,15 @@ void LevelScene::initObjects()
 	const std::string file = getLevelFile();
 	const glm::vec2 minCoords = glm::vec2(SCREEN_OFFSET_X, SCREEN_OFFSET_Y);
 	map = TileMap::createTileMap(file, minCoords, texProgram);
-	if (map) {
-		player.init(glm::ivec2(SCREEN_OFFSET_X, SCREEN_OFFSET_Y), texProgram);
-		player.setPosition(getInitialPlayerTilePos());
-		player.setTileMap(map);
 
-		cam = new Camera(SCREEN_WIDTH, SCREEN_HEIGHT, map->getMapPixelSize(), player.getPosition());
-	}
+	player.init(glm::ivec2(SCREEN_OFFSET_X, SCREEN_OFFSET_Y), texProgram);
+	player.setPosition(getInitialPlayerTilePos());
+	player.setTileMap(map);
+
+	cam = new Camera(SCREEN_WIDTH, SCREEN_HEIGHT, map->getMapPixelSize(), player.getPosition());
+	gui = new GUI(simpleProgram);
+	gui->init();
+
 	onLevelInit();
 }
 
@@ -46,8 +48,10 @@ void LevelScene::renderObjects()
 	texProgram.setUniformMatrix4f("modelview", view);
 	simpleProgram.setUniformMatrix4f("modelview", view);
 
-	if (map) map->render();
+	map->render();
 	player.render(view);
+	gui->render();
+
 	onLevelRender();
 }
 

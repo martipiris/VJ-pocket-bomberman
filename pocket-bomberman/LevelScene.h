@@ -7,6 +7,7 @@
 #include "libs/TileMap.h"
 #include "Player.h"
 #include "Camera.h"
+#include "GUI.h"
 
 #define SCREEN_OFFSET_X 16
 #define SCREEN_OFFSET_Y 16
@@ -33,6 +34,7 @@ protected:
 
 	TileMap *map = nullptr;
 	Player player;
+	GUI *gui = nullptr;
 
 	int playerInitialTileX = 4;
 	int playerInitialTileY = 25;

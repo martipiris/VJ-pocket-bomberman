@@ -41,44 +41,33 @@ void Scene::deleteScene() {
 
 void Scene::initShaders()
 {
-	Shader vShader, fShader;
+	Shader textureVertexShader;
+	Shader textureFragmentShader;
+	Shader simpleVertexShader;
+	Shader simpleFragmentShader;
 
-	vShader.initFromFile(VERTEX_SHADER, "shaders/texture.vert");
-	if(!vShader.isCompiled())
-	{
-		cout << "Vertex Shader Error" << endl;
-		cout << "" << vShader.log() << endl << endl;
-	}
-	fShader.initFromFile(FRAGMENT_SHADER, "shaders/texture.frag");
-	if(!fShader.isCompiled())
-	{
-		cout << "Fragment Shader Error" << endl;
-		cout << "" << fShader.log() << endl << endl;
-	}
+	textureVertexShader.initFromFile(VERTEX_SHADER, "shaders/texture.vert");
+	textureFragmentShader.initFromFile(FRAGMENT_SHADER, "shaders/texture.frag");
 
-	simpleProgram.init();
-	simpleProgram.addShader(vShader);
-	simpleProgram.addShader(fShader);
-	simpleProgram.bindFragmentOutput("outColor");
-	simpleProgram.link();
-	if (!simpleProgram.isLinked())
-	{
-		cout << "Shader Linking Error" << endl;
-		cout << "" << simpleProgram.log() << endl << endl;
-	}
+	simpleVertexShader.initFromFile(VERTEX_SHADER, "shaders/simple.vert");
+	simpleFragmentShader.initFromFile(FRAGMENT_SHADER, "shaders/simple.frag");
 
 	texProgram.init();
-	texProgram.addShader(vShader);
-	texProgram.addShader(fShader);
+	texProgram.addShader(textureVertexShader);
+	texProgram.addShader(textureFragmentShader);
 	texProgram.bindFragmentOutput("outColor");
 	texProgram.link();
-	if(!texProgram.isLinked())
-	{
-		cout << "Shader Linking Error" << endl;
-		cout << "" << texProgram.log() << endl << endl;
-	}
-	vShader.free();
-	fShader.free();
+
+	simpleProgram.init();
+	simpleProgram.addShader(simpleVertexShader);
+	simpleProgram.addShader(simpleFragmentShader);
+	simpleProgram.bindFragmentOutput("outColor");
+	simpleProgram.link();
+
+	textureVertexShader.free();
+	textureFragmentShader.free();
+	simpleVertexShader.free();
+	simpleFragmentShader.free();
 }
 
 
