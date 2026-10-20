@@ -47,6 +47,7 @@ void LevelScene::renderObjects()
 	simpleProgram.setUniformMatrix4f("modelview", view);
 
 	if (map) map->render();
+
 	player.render(view);
 	onLevelRender();
 }

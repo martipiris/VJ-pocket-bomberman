@@ -14,7 +14,7 @@ void Camera::update() {
     m_position.x = m_target.x - halfW;
     m_position.y = m_target.y - halfH;
 
-    if (m_position.x < 0.f) m_position.x = 0.f;
+    if (m_position.x < 20.f) m_position.x = 20.f;
     if (m_position.y < 0.f) m_position.y = 0.f;
     float maxX = float(m_worldSize.x) - float(m_viewport.x);
     float maxY = float(m_worldSize.y) - float(m_viewport.y) + float(SCREEN_OFFSET_Y);

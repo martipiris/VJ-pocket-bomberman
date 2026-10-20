@@ -90,7 +90,7 @@ bool TileMap::loadLevel(const string &levelFile)
 			if(tile == ' ')
 				map[j*mapSize.x+i] = 0;
 			else
-				map[j*mapSize.x+i] = tile - int('0');
+				map[j*mapSize.x+i] = tile >= int('A') ? tile - int('A') + 10 : tile - int('0');
 		}
 		fin.get(tile);
 #ifndef _WIN32
@@ -109,7 +109,7 @@ void TileMap::prepareArrays(const glm::vec2 &minCoords, ShaderProgram &program)
 	vector<float> vertices;
 	
 	nTiles = 0;
-	halfTexel = glm::vec2(0.5f / tilesheet.width(), 0.5f / tilesheet.height());
+	halfTexel = glm::vec2(0,0);// glm::vec2(0.5f / tilesheet.width(), 0.5f / tilesheet.height());
 	for(int j=0; j<mapSize.y; j++)
 	{
 		for(int i=0; i<mapSize.x; i++)

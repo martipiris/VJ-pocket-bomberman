@@ -28,8 +28,9 @@ private:
 	TexturedQuad* title;
 	TexturedQuad* menu_bg;
 	TexturedQuad* selectorBomb;
+	TexturedQuad* character;
 
-	Texture texs[3];
+	Texture texs[4];
 };
 
 #endif // _STARTING_SCENE_INCLUDE
