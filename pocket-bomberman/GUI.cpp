@@ -26,7 +26,7 @@ void GUI::render()
 			0.0f));
 
 	program.setUniformMatrix4f("modelview", glm::mat4(1.0f));
-	program.setUniform4f("color", 0.2f, 0.2f, 0.8f, 1.0f);
+	program.setUniform4f("color", 248/256.0f, 112/256.0f, 208/256.0f, 1.0f);
 
 	background->render();
 
