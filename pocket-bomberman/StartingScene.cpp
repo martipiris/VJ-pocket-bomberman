@@ -4,6 +4,7 @@
 void StartingScene::renderObjects() {
 	title->render(texs[0]);
 	menu_bg->render(texs[1]);
+	character->render(texs[3]);
 
 	glm::mat4 modelview;
 	modelview = glm::translate(glm::mat4(1.0f), glm::vec3(0.f, 50.f*selectedOption, 0.f));
@@ -40,7 +41,7 @@ void StartingScene::initObjects() {
 
 	// Title
 	glm::vec2 geom[2] = { glm::vec2(75.f, 0.f), glm::vec2(SCREEN_WIDTH - 75, SCREEN_HEIGHT * 0.4375) };
-	texCoords[0] = glm::vec2(0.f, 0.f); texCoords[1] = glm::vec2(1.f, 1.f);
+	texCoords[0] = glm::vec2(0.f, 0.f); texCoords[1] = glm::vec2(0.66f, 0.73f);
 	title = TexturedQuad::createTexturedQuad(geom, texCoords, texProgram);
 
 	// Menu background
@@ -49,7 +50,7 @@ void StartingScene::initObjects() {
 	texCoords[0] = glm::vec2(0.f, 0.f); texCoords[1] = glm::vec2(1.f, 1.f);
 	menu_bg = TexturedQuad::createTexturedQuad(geom, texCoords, texProgram);
 
-	texs[0].loadFromFile("images/title.png", TEXTURE_PIXEL_FORMAT_RGBA);
+	texs[0].loadFromFile("images/title_spritesheet.png", TEXTURE_PIXEL_FORMAT_RGBA);
 	texs[0].setMagFilter(GL_NEAREST);
 
 	// Menu background
@@ -64,11 +65,19 @@ void StartingScene::initObjects() {
 	// Selector bomb
 	geom[0] = glm::vec2(245.f, 227.f); geom[1] = glm::vec2(270.f, 252.f);
 
-	texCoords[0] = glm::vec2(0.f, 0.f); texCoords[1] = glm::vec2(1.f, 0.5f);
+	texCoords[0] = glm::vec2(0.03f, 0.85f); texCoords[1] = glm::vec2(0.08f, 0.945f);
 	selectorBomb = TexturedQuad::createTexturedQuad(geom, texCoords, texProgram);
 
-	texs[2].loadFromFile("images/menu_bombs.png", TEXTURE_PIXEL_FORMAT_RGBA);
+	texs[2].loadFromFile("images/title_spritesheet.png", TEXTURE_PIXEL_FORMAT_RGBA);
 	texs[2].setMagFilter(GL_NEAREST);
+
+	//Character
+	geom[0] = glm::vec2(20.f, 190.f); geom[1] = glm::vec2(SCREEN_WIDTH - 270, SCREEN_HEIGHT - 20);
+	texCoords[0] = glm::vec2(0.68f, 0.05f); texCoords[1] = glm::vec2(1.f, 0.92f);
+	character = TexturedQuad::createTexturedQuad(geom, texCoords, texProgram);
+
+	texs[3].loadFromFile("images/title_spritesheet.png", TEXTURE_PIXEL_FORMAT_RGBA);
+	texs[3].setMagFilter(GL_NEAREST);
 }
 
 void StartingScene::updateObjects(int deltaTime) {
