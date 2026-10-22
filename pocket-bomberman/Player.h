@@ -5,6 +5,8 @@
 #include "libs/TileMap.h"
 
 #define SIZE_PLAYER glm::ivec2(64, 64)
+#define SIZE_PLAYER_COLLISION glm::ivec2(48, 64)
+#define PLAYER_COLLISION_OFFSET glm::ivec2(8, 0)
 
 class Player
 {
