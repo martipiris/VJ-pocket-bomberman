@@ -24,7 +24,7 @@ void LevelScene::initObjects()
 	player.setTileMap(map);
 
 	cam = new Camera(SCREEN_WIDTH, SCREEN_HEIGHT, map->getMapPixelSize(), player.getPosition());
-	gui = new GUI(simpleProgram);
+	gui = new GUI(simpleProgram, texProgram);
 	gui->init();
 
 	onLevelInit();

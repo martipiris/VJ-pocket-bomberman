@@ -83,7 +83,11 @@ void Player::update(int deltaTime) {
 		}
 		posPlayerF.x -= horizSpeed * dt;
 	} else if (Game::instance().getKey(GLFW_KEY_RIGHT)) {
-		if (sprite->animation() != MOVE_RIGHT) sprite->changeAnimation(MOVE_RIGHT);
+		if (onGround) {
+			if (sprite->animation() != MOVE_RIGHT) sprite->changeAnimation(MOVE_RIGHT);
+		} else {
+			if (sprite->animation() != JUMP_RIGHT && sprite->animation() != FALL_RIGHT) sprite->changeAnimation(velY < 0 ? JUMP_RIGHT : FALL_RIGHT);
+		}
 		posPlayerF.x += horizSpeed * dt;
 	} else {
 		if (sprite->animation() == MOVE_LEFT) sprite->changeAnimation(STAND_LEFT);
