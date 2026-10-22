@@ -8,9 +8,10 @@
 #include "Player.h"
 #include "Camera.h"
 #include "GUI.h"
+#include "Enemy.h"
 
-#define SCREEN_OFFSET_X 16
-#define SCREEN_OFFSET_Y 16
+#define SCREEN_OFFSET_X 0
+#define SCREEN_OFFSET_Y 0
 
 class LevelScene : public Scene {
 public:
@@ -45,6 +46,9 @@ protected:
 
 private:
 	std::string m_levelFile;
+
+	// REMOVE
+	Enemy *e;
 };
 
 

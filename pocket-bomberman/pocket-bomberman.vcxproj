@@ -12,6 +12,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="Enemy.h" />
     <ClInclude Include="GUI.h" />
     <ClInclude Include="Level1.h" />
     <ClInclude Include="LevelScene.h" />
@@ -25,12 +26,14 @@
     <ClInclude Include="libs\Texture.h" />
     <ClInclude Include="libs\TexturedQuad.h" />
     <ClInclude Include="libs\TileMap.h" />
+    <ClInclude Include="Monkey.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="StartingScene.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="GUI.cpp" />
     <ClCompile Include="Level1.cpp" />
     <ClCompile Include="LevelScene.cpp" />
@@ -44,6 +47,7 @@
     <ClCompile Include="libs\TexturedQuad.cpp" />
     <ClCompile Include="libs\TileMap.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Monkey.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="StartingScene.cpp" />

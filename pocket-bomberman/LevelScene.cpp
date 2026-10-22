@@ -2,6 +2,7 @@
 #include <cmath>
 #include <glm/gtc/matrix_transform.hpp>
 #include "LevelScene.h"
+#include "Monkey.h"
 
 LevelScene::LevelScene(const std::string &levelFile)
 	: m_levelFile(levelFile), map(nullptr)
@@ -27,6 +28,10 @@ void LevelScene::initObjects()
 	gui = new GUI(simpleProgram, texProgram);
 	gui->init();
 
+	//REMOVE
+	e = new Monkey();
+	e->init(getInitialPlayerTilePos(), texProgram);
+
 	onLevelInit();
 }
 
@@ -50,6 +55,8 @@ void LevelScene::renderObjects()
 
 	map->render();
 	player.render(view);
+	e->render(view);
+
 	gui->render();
 
 	onLevelRender();
