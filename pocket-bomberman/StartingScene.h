@@ -15,7 +15,7 @@ public:
 
 	void initObjects();
 	void renderObjects();
-	void updateObjects(int deltaTime);
+	void updateObjects(int deltaTime, int currentTime);
 	void deleteObjects();
 
 private:

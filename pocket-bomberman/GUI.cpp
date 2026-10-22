@@ -43,8 +43,15 @@ void GUI::render() {
 
 	for (int i=0; i<5; ++i) {
 		stats[i]->icon->render(texs);
-		stats[i]->text->render(i == 0 ? "3:59" : "1", glm::vec2(stats[i]->x_coord + GUI_HEIGHT + 7, SCREEN_HEIGHT + 6), 45, glm::vec4(0, 0, 0, 1));
+		stats[i]->text->render(i == 0 ? timer : "1", glm::vec2(stats[i]->x_coord + GUI_HEIGHT + 7, SCREEN_HEIGHT + 6), 45, glm::vec4(0, 0, 0, 1));
 	}
 
 	glEnable(GL_DEPTH_TEST);
+}
+
+void GUI::updateTimer(int newTime) {
+	int minutes = newTime / 60;
+	int seconds = newTime % 60;
+
+	sprintf(timer, "%d:%02d", minutes, seconds);
 }

@@ -22,8 +22,9 @@ public:
 	~GUI();
 
 	void init();
-
 	void render();
+
+	void updateTimer(int newTime);
 private:
 	const int x_coords[5] = {20, 190, 260, 330, 400};
 	glm::vec2 texCoords[5][2] = {
@@ -33,6 +34,8 @@ private:
 		{glm::vec2(0.25f, 0.0f), glm::vec2(0.5f, 0.5f)},
 		{glm::vec2(0.0f, 0.0f), glm::vec2(0.25f, 0.5f)}
 	};
+
+	char timer[6];
 
 	Quad *background;
 	Stat *stats[5];

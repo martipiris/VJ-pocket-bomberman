@@ -30,12 +30,12 @@ void LevelScene::initObjects()
 	onLevelInit();
 }
 
-void LevelScene::updateObjects(int deltaTime)
+void LevelScene::updateObjects(int deltaTime, int currentTime)
 {
-	// Actualizar jugador primero (posicionará su sprite)
+	gui->updateTimer(std::max(0, int(timer - currentTime / 1000)));
+
 	player.update(deltaTime);
 
-	// Actualizar cámara para centrarla en el jugador
 	cam->setTarget(player.getPosition());
 	cam->update();
 

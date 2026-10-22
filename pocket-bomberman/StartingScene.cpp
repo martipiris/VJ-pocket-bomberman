@@ -79,7 +79,7 @@ void StartingScene::initObjects() {
 	texs[3].setMagFilter(GL_NEAREST);
 }
 
-void StartingScene::updateObjects(int deltaTime) {
+void StartingScene::updateObjects(int deltaTime, int currentTime) {
 
 	if (Game::instance().isKeyPressedOnce(GLFW_KEY_DOWN)) {
 		selectedOption = (selectedOption + 1) % 3;

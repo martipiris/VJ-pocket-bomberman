@@ -20,7 +20,7 @@ public:
 private:
 	void renderObjects() override;
 	void initObjects() override;
-	void updateObjects(int deltaTime) override;
+	void updateObjects(int deltaTime, int currentTime) override;
 	void deleteObjects() override;
 
 protected:
@@ -38,6 +38,8 @@ protected:
 
 	int playerInitialTileX = 4;
 	int playerInitialTileY = 13;
+
+	int timer = 240;
 
 	Camera *cam;
 

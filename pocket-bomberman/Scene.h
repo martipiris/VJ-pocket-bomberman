@@ -24,7 +24,7 @@ public:
 private:
 	virtual void renderObjects() = 0;
 	virtual void initObjects() = 0;
-	virtual void updateObjects(int deltaTime) = 0;
+	virtual void updateObjects(int deltaTime, int currentTime) = 0;
 	virtual void deleteObjects() = 0;
 
 protected:

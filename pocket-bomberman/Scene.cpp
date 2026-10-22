@@ -17,7 +17,7 @@ void Scene::init()
 void Scene::update(int deltaTime)
 {
 	currentTime += deltaTime;
-	updateObjects(deltaTime);
+	updateObjects(deltaTime, currentTime);
 }
 
 void Scene::render()
