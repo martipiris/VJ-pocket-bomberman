@@ -12,10 +12,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="GUI.h" />
     <ClInclude Include="Level1.h" />
     <ClInclude Include="LevelScene.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="libs\AnimKeyframes.h" />
+    <ClInclude Include="libs\Quad.h" />
     <ClInclude Include="libs\Shader.h" />
     <ClInclude Include="libs\ShaderProgram.h" />
     <ClInclude Include="libs\Sprite.h" />
@@ -29,9 +31,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="GUI.cpp" />
     <ClCompile Include="Level1.cpp" />
     <ClCompile Include="LevelScene.cpp" />
     <ClCompile Include="Game.cpp" />
+    <ClCompile Include="libs\Quad.cpp" />
     <ClCompile Include="libs\Shader.cpp" />
     <ClCompile Include="libs\ShaderProgram.cpp" />
     <ClCompile Include="libs\Sprite.cpp" />

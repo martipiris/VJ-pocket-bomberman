@@ -16,12 +16,29 @@ TileMap *TileMap::createTileMap(const string &levelFile, const glm::vec2 &minCoo
 }
 
 
-TileMap::TileMap(const string &levelFile, const glm::vec2 &minCoords, ShaderProgram &program)
+TileMap::TileMap(
+	const string& levelFile,
+	const glm::vec2& minCoords,
+	ShaderProgram& program
+)
+	: vao(0)
+	, vbo(0)
+	, posLocation(0)
+	, texCoordLocation(0)
+	, nTiles(0)
+	, position(0, 0)
+	, mapSize(0, 0)
+	, tilesheetSize(0, 0)
+	, tileSize(0)
+	, blockSize(0)
+	, map(nullptr)
 {
-	if (!loadLevel(levelFile)) {
+	if (!loadLevel(levelFile))
+	{
 		printf("ERROR: Could not load tilemap level file: %s\n", levelFile.c_str());
-		return; 
+		return;
 	}
+
 	prepareArrays(minCoords, program);
 }
 
@@ -50,56 +67,90 @@ void TileMap::free()
 	glDeleteBuffers(1, &vbo);
 }
 
-bool TileMap::loadLevel(const string &levelFile)
+bool TileMap::loadLevel(const string& levelFile)
 {
 	ifstream fin;
 	string line, tilesheetFile;
 	stringstream sstream;
 	char tile;
-	
+
 	fin.open(levelFile.c_str());
-	if(!fin.is_open())
+
+	if (!fin.is_open())
 		return false;
+
 	getline(fin, line);
-	if(line.compare(0, 7, "TILEMAP") != 0)
+
+	if (line.compare(0, 7, "TILEMAP") != 0)
 		return false;
+
 	getline(fin, line);
+	sstream.clear();
 	sstream.str(line);
 	sstream >> mapSize.x >> mapSize.y;
+
 	getline(fin, line);
+	sstream.clear();
 	sstream.str(line);
 	sstream >> tileSize >> blockSize;
+
+	if (tileSize <= 0 || blockSize <= 0)
+		return false;
+
 	getline(fin, line);
+	sstream.clear();
 	sstream.str(line);
 	sstream >> tilesheetFile;
+
+	if (tilesheetFile.empty())
+		return false;
+
 	tilesheet.loadFromFile(tilesheetFile, TEXTURE_PIXEL_FORMAT_RGBA);
 	tilesheet.setWrapS(GL_CLAMP_TO_EDGE);
 	tilesheet.setWrapT(GL_CLAMP_TO_EDGE);
 	tilesheet.setMinFilter(GL_NEAREST);
 	tilesheet.setMagFilter(GL_NEAREST);
+
 	getline(fin, line);
+	sstream.clear();
 	sstream.str(line);
 	sstream >> tilesheetSize.x >> tilesheetSize.y;
-	tileTexSize = glm::vec2(1.f / tilesheetSize.x, 1.f / tilesheetSize.y);
-	
+
+	if (tilesheetSize.x <= 0 || tilesheetSize.y <= 0)
+		return false;
+
+	tileTexSize = glm::vec2(
+		1.f / tilesheetSize.x,
+		1.f / tilesheetSize.y
+	);
+
 	map = new int[mapSize.x * mapSize.y];
-	for(int j=0; j<mapSize.y; j++)
+
+	for (int j = 0; j < mapSize.y; ++j)
 	{
-		for(int i=0; i<mapSize.x; i++)
+		for (int i = 0; i < mapSize.x; ++i)
 		{
 			fin.get(tile);
-			if(tile == ' ')
-				map[j*mapSize.x+i] = 0;
+
+			if (tile == ' ')
+				map[j * mapSize.x + i] = 0;
 			else
-				map[j*mapSize.x+i] = tile >= int('A') ? tile - int('A') + 10 : tile - int('0');
+				map[j * mapSize.x + i] =
+				tile >= int('A')
+				? tile - int('A') + 10
+				: tile - int('0');
 		}
+
+		// Consumir el salto de línea.
 		fin.get(tile);
+
 #ifndef _WIN32
 		fin.get(tile);
 #endif
 	}
+
 	fin.close();
-	
+
 	return true;
 }
 
@@ -189,36 +240,27 @@ bool TileMap::collisionMoveRight(const glm::ivec2 &pos, const glm::ivec2 &size) 
 	return false;
 }
 
-bool TileMap::collisionMoveDown(const glm::ivec2 &pos, const glm::ivec2 &size, int *posY) const
-{
+bool TileMap::collisionMoveDown(const glm::ivec2& pos, const glm::ivec2& size, int* posY) const {
 	const int x0 = std::max(0, pos.x / tileSize);
-	const int x1 = std::min(mapSize.x - 1, (pos.x + size.x - 1) / tileSize);
+	const int x1 = std::min(
+		mapSize.x - 1,
+		(pos.x + size.x - 1) / tileSize
+	);
 
 	if (x0 > x1)
 		return false;
 
 	const int bottom = pos.y + size.y;
+	const int row = bottom / tileSize;
 
-	const int currentRow = (bottom - 1) / tileSize;
-
-	const int supportRow = bottom / tileSize;
+	if (row < 0 || row >= mapSize.y)
+		return false;
 
 	for (int x = x0; x <= x1; ++x)
 	{
-		if (currentRow >= 0 &&
-			currentRow < mapSize.y &&
-			map[currentRow * mapSize.x + x] != 0)
+		if (map[row * mapSize.x + x] != 0)
 		{
-			*posY = currentRow * tileSize - size.y;
-			return true;
-		}
-
-		if (bottom % tileSize == 0 &&
-			supportRow >= 0 &&
-			supportRow < mapSize.y &&
-			map[supportRow * mapSize.x + x] != 0)
-		{
-			*posY = supportRow * tileSize - size.y;
+			*posY = row * tileSize - size.y;
 			return true;
 		}
 	}

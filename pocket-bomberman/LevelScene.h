@@ -7,6 +7,7 @@
 #include "libs/TileMap.h"
 #include "Player.h"
 #include "Camera.h"
+#include "GUI.h"
 
 #define SCREEN_OFFSET_X 16
 #define SCREEN_OFFSET_Y 16
@@ -19,7 +20,7 @@ public:
 private:
 	void renderObjects() override;
 	void initObjects() override;
-	void updateObjects(int deltaTime) override;
+	void updateObjects(int deltaTime, int currentTime) override;
 	void deleteObjects() override;
 
 protected:
@@ -33,9 +34,12 @@ protected:
 
 	TileMap *map = nullptr;
 	Player player;
+	GUI *gui = nullptr;
 
 	int playerInitialTileX = 4;
 	int playerInitialTileY = 13;
+
+	int timer = 240;
 
 	Camera *cam;
 

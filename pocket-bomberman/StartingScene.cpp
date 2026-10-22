@@ -19,7 +19,6 @@ void StartingScene::renderObjects() {
 		startingY += 50;
 	}
 
-
 	bottomText.render("VJ FIB QT 2026/27", glm::vec2(30, SCREEN_HEIGHT-20), 40, glm::vec4(0, 0, 0, 1));
 }
 
@@ -80,7 +79,7 @@ void StartingScene::initObjects() {
 	texs[3].setMagFilter(GL_NEAREST);
 }
 
-void StartingScene::updateObjects(int deltaTime) {
+void StartingScene::updateObjects(int deltaTime, int currentTime) {
 
 	if (Game::instance().isKeyPressedOnce(GLFW_KEY_DOWN)) {
 		selectedOption = (selectedOption + 1) % 3;

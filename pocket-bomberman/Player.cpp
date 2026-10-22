@@ -83,22 +83,26 @@ void Player::update(int deltaTime) {
 		}
 		posPlayerF.x -= horizSpeed * dt;
 	} else if (Game::instance().getKey(GLFW_KEY_RIGHT)) {
-		if (sprite->animation() != MOVE_RIGHT) sprite->changeAnimation(MOVE_RIGHT);
+		if (onGround) {
+			if (sprite->animation() != MOVE_RIGHT) sprite->changeAnimation(MOVE_RIGHT);
+		} else {
+			if (sprite->animation() != JUMP_RIGHT && sprite->animation() != FALL_RIGHT) sprite->changeAnimation(velY < 0 ? JUMP_RIGHT : FALL_RIGHT);
+		}
 		posPlayerF.x += horizSpeed * dt;
 	} else {
 		if (sprite->animation() == MOVE_LEFT) sprite->changeAnimation(STAND_LEFT);
 		else if (sprite->animation() == MOVE_RIGHT) sprite->changeAnimation(STAND_RIGHT);
 	}
 
-	glm::ivec2 candidateH = glm::ivec2(int(posPlayerF.x), int(posPlayerF.y));
-	if (posPlayerF.x < posPlayer.x && map->collisionMoveLeft(candidateH, SIZE_PLAYER)) {
+	glm::ivec2 candidateH = glm::ivec2(int(posPlayerF.x) + PLAYER_COLLISION_OFFSET.x, int(posPlayerF.y));
+	if (posPlayerF.x < posPlayer.x && map->collisionMoveLeft(candidateH, SIZE_PLAYER_COLLISION)) {
 		posPlayerF.x = float(posPlayer.x);
 	}
-	if (posPlayerF.x > posPlayer.x && map->collisionMoveRight(candidateH, SIZE_PLAYER)) {
+	if (posPlayerF.x > posPlayer.x && map->collisionMoveRight(candidateH, SIZE_PLAYER_COLLISION)) {
 		posPlayerF.x = float(posPlayer.x);
 	}
 
-	if (onGround && Game::instance().getKey(GLFW_KEY_UP)) {
+	if (onGround && Game::instance().getKey(GLFW_KEY_X)) {
 		velY = -jumpSpeed;
 		onGround = false;
 
@@ -131,13 +135,13 @@ void Player::update(int deltaTime) {
 	for (int i = 0; i < steps; ++i)	{
 		const float nextY = posPlayerF.y + verticalStep;
 		glm::ivec2 candidate(
-			static_cast<int>(posPlayerF.x),
+			static_cast<int>(posPlayerF.x) + PLAYER_COLLISION_OFFSET.x,
 			static_cast<int>(nextY));
 
 		if (verticalStep > 0.f) {
 			int correctedY = candidate.y;
 
-			if (map->collisionMoveDown(candidate, SIZE_PLAYER, &correctedY)) {
+			if (map->collisionMoveDown(candidate, SIZE_PLAYER_COLLISION, &correctedY)) {
 				posPlayerF.y = static_cast<float>(correctedY);
 				velY = 0.f;
 				onGround = true;
@@ -151,7 +155,7 @@ void Player::update(int deltaTime) {
 		} else if (verticalStep < 0.f) {
 			int correctedY = candidate.y;
 
-			if (map->collisionMoveUp(candidate, SIZE_PLAYER, &correctedY)) {
+			if (map->collisionMoveUp(candidate, SIZE_PLAYER_COLLISION, &correctedY)) {
 				posPlayerF.y = static_cast<float>(correctedY);
 				velY = 0.f;
 				onGround = false;
