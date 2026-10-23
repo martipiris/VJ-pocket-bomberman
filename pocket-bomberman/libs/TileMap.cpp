@@ -293,3 +293,11 @@ bool TileMap::collisionMoveUp(const glm::ivec2 &pos, const glm::ivec2 &size, int
 
     return false;
 }
+
+glm::ivec2 TileMap::getMapSize() const { return mapSize; }
+
+glm::ivec2 TileMap::getMapPixelSize() const { return glm::ivec2(mapSize.x * tileSize, mapSize.y * tileSize); }
+
+glm::ivec2 TileMap::tile2Pixel(const glm::ivec2& tilePos) const { return glm::ivec2(tilePos.x * tileSize, tilePos.y * tileSize); }
+
+glm::ivec2 TileMap::pixel2Tile(const glm::ivec2& pixelPos) const { return glm::ivec2(pixelPos.x / tileSize, pixelPos.y / tileSize); }

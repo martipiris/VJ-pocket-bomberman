@@ -3,6 +3,10 @@
 
 #include <string>
 #include <glm/glm.hpp>
+#include <memory>
+#include <vector>
+#include <utility>
+
 #include "Scene.h"
 #include "libs/TileMap.h"
 #include "Player.h"
@@ -40,15 +44,21 @@ protected:
 	int playerInitialTileX = 4;
 	int playerInitialTileY = 13;
 
+	template <typename T>
+	T& addEnemy() {
+		auto ptr = std::make_unique<T>();
+		T& ref = *ptr;
+		enemies.push_back(std::move(ptr));
+		return ref;
+	}
+	std::vector<std::unique_ptr<Enemy>> enemies;
+
 	int timer = 240;
 
 	Camera *cam;
 
 private:
 	std::string m_levelFile;
-
-	// REMOVE
-	Enemy *e;
 };
 
 

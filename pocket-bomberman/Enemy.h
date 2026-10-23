@@ -11,21 +11,20 @@
 class Enemy {
 public:
 	Enemy();
-	~Enemy();
+	virtual ~Enemy();
 
 	virtual void init(const glm::ivec2& tileMapPos, ShaderProgram& shaderProgram) = 0;
 	void update(int deltaTime);
 	void render(const glm::mat4& view);
 
 	void setPosition(const glm::vec2& pos);
-
 	glm::vec2 getPosition() const;
 protected:
+	glm::ivec2 posEnemy;
+
 	Texture spritesheet;
 	Sprite* sprite;
 private:
-	glm::ivec2 posEnemy;
-
 	virtual void updateMovement() = 0;
 };
 
