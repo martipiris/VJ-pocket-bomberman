@@ -31,6 +31,8 @@ private:
 protected:
 	virtual std::string getLevelFile() const;
 
+	virtual LevelScene* create() const = 0;
+
 	glm::vec2 getInitialPlayerTilePos() const;
 
 	virtual void onLevelInit() {}
@@ -59,6 +61,10 @@ protected:
 
 private:
 	std::string m_levelFile;
+	bool isGameOver = false;
+	int gameOverTimer = 180;
+
+	bool enemyPlayerCollision() const;
 };
 
 

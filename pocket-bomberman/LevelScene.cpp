@@ -32,6 +32,14 @@ void LevelScene::initObjects()
 
 void LevelScene::updateObjects(int deltaTime, int currentTime)
 {
+	if (isGameOver) {
+		if (gameOverTimer > 0) {
+			--gameOverTimer;
+		} else {
+			Game::instance().changeScene(create());
+		}
+	}
+
 	gui->updateTimer(std::max(0, int(timer - currentTime / 1000)));
 
 	player.update(deltaTime);
@@ -42,6 +50,8 @@ void LevelScene::updateObjects(int deltaTime, int currentTime)
 	for (auto& enemy : enemies) {
 		enemy->update(deltaTime);
 	}
+
+	printf(enemyPlayerCollision() ? "Colliding\n" : "Not colliding\n");
 
 	onLevelUpdate(deltaTime);
 }
@@ -81,4 +91,16 @@ glm::vec2 LevelScene::getInitialPlayerTilePos() const {
 		return glm::vec2(0.f, 0.f);
 	}
 	return glm::vec2(playerInitialTileX*map->getTileSize(), playerInitialTileY * map->getTileSize());
+}
+
+bool LevelScene::enemyPlayerCollision() const {
+	for (const auto& enemy : enemies) {
+		const glm::vec2 enemyPos = enemy->getPosition();
+		const glm::vec2 playerPos = player.getPosition();
+		if (std::abs(enemyPos.x - playerPos.x) < SIZE_ENEMY_COLLISION.x &&
+			std::abs(enemyPos.y - playerPos.y) < SIZE_ENEMY_COLLISION.y) {
+			return true;
+		}
+	}
+	return false;
 }

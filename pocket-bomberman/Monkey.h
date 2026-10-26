@@ -8,8 +8,11 @@ public:
 	Monkey();
 	~Monkey();
 
-	void init(const glm::ivec2& tileMapPos, ShaderProgram& shaderProgram) override;
+	void init() override;
 	void updateMovement() override;
+private:
+	int state;
+	int timer;
 };
 
 #endif // MONKEY_INCLUDE

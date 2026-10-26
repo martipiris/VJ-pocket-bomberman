@@ -8,9 +8,13 @@ enum monkeyAnims {
 	MOVE, EXPLODE
 };
 
-void Monkey::init(const glm::ivec2& initPos, ShaderProgram& shaderProgram) {
+enum monkeyState {
+	MOVE_LEFT, MOVE_RIGHT
+};
+
+void Monkey::init() {
 	spritesheet.loadFromFile("images/monkey.png", TEXTURE_PIXEL_FORMAT_RGBA);
-	sprite = Sprite::createSprite(SIZE_ENEMY, glm::vec2(0.2f, 1.f), &spritesheet, &shaderProgram);
+	sprite = Sprite::createSprite(SIZE_ENEMY, glm::vec2(0.2f, 1.f), &spritesheet, &texProgram);
 	sprite->setNumberAnimations(2);
 
 	sprite->setAnimationSpeed(MOVE, 3);
@@ -23,11 +27,41 @@ void Monkey::init(const glm::ivec2& initPos, ShaderProgram& shaderProgram) {
 	sprite->addKeyframe(EXPLODE, glm::vec2(0.8f, 0.f));
 
 	sprite->changeAnimation(MOVE);
-	sprite->setPosition(initPos); 
+	sprite->setPosition(mapDispl);
+
+	state = MOVE_RIGHT;
+	timer = 0;
 }
 
 void Monkey::updateMovement() {
-	posEnemy.x += 1;
+	int tileSize = map->getTileSize();
 
-	sprite->setPosition(posEnemy);
+	if (timer > 0) {
+		++timer;
+		if (timer > 180) {
+			timer = 0;
+			state = (state == MOVE_LEFT) ? MOVE_RIGHT : MOVE_LEFT;
+		}
+	} else {
+		switch (state) {
+		case MOVE_RIGHT:
+			if (!map->isTileSolid(glm::ivec2(mapDispl.x + posEnemy.x + tileSize, mapDispl.y + posEnemy.y)) &&
+				map->isTileSolid(glm::ivec2(mapDispl.x + posEnemy.x + tileSize, mapDispl.y + posEnemy.y + tileSize))) {
+				posEnemy.x += 1;
+			}
+			else {
+				timer = 1;
+			}
+			break;
+		case MOVE_LEFT:
+			if (!map->isTileSolid(glm::ivec2(mapDispl.x + posEnemy.x - 1, mapDispl.y + posEnemy.y)) &&
+				map->isTileSolid(glm::ivec2(mapDispl.x + posEnemy.x - 1, mapDispl.y + posEnemy.y + tileSize))) {
+				posEnemy.x -= 1;
+			}
+			else {
+				timer = 1;
+			}
+			break;
+		}
+	}
 }

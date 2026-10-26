@@ -14,11 +14,19 @@ public:
 
 	~Level1() override = default;
 
-protected:
+	LevelScene* create() const override {
+		return new Level1();
+	}
+
+private:
+	glm::ivec2 enemyCoords[4] = { glm::ivec2(1, 9), 
+								  glm::ivec2(7, 7),
+								  glm::ivec2(7, 4),
+								  glm::ivec2(12, 13)
+	};
+
 	void onLevelInit() override;
-
 	void onLevelUpdate(int deltaTime) override;
-
 	void onLevelRender() override;
 };
 

@@ -13,7 +13,8 @@ public:
 	Enemy();
 	virtual ~Enemy();
 
-	virtual void init(const glm::ivec2& tileMapPos, ShaderProgram& shaderProgram) = 0;
+	void init(const glm::ivec2& tileMapPos, TileMap* tileMap, ShaderProgram& shaderProgram);
+
 	void update(int deltaTime);
 	void render(const glm::mat4& view);
 
@@ -21,10 +22,16 @@ public:
 	glm::vec2 getPosition() const;
 protected:
 	glm::ivec2 posEnemy;
+	glm::ivec2 mapDispl;
+
+	TileMap* map;
 
 	Texture spritesheet;
 	Sprite* sprite;
+
+	ShaderProgram texProgram;
 private:
+	virtual void init() = 0;
 	virtual void updateMovement() = 0;
 };
 

@@ -41,6 +41,8 @@ public:
 	glm::ivec2 tile2Pixel(const glm::ivec2& tilePos) const;
 	glm::ivec2 pixel2Tile(const glm::ivec2& pixelPos) const;
 
+	bool isTileSolid(const glm::ivec2& tilePos) const;
+
 private:
 	bool loadLevel(const string &levelFile);
 	void prepareArrays(const glm::vec2 &minCoords, ShaderProgram &program);

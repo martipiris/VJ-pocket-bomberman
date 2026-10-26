@@ -301,3 +301,12 @@ glm::ivec2 TileMap::getMapPixelSize() const { return glm::ivec2(mapSize.x * tile
 glm::ivec2 TileMap::tile2Pixel(const glm::ivec2& tilePos) const { return glm::ivec2(tilePos.x * tileSize, tilePos.y * tileSize); }
 
 glm::ivec2 TileMap::pixel2Tile(const glm::ivec2& pixelPos) const { return glm::ivec2(pixelPos.x / tileSize, pixelPos.y / tileSize); }
+
+bool TileMap::isTileSolid(const glm::ivec2& tilePos) const
+{
+	glm::ivec2 mapCoords = pixel2Tile(tilePos);
+	if (mapCoords.x < 0 || mapCoords.x >= mapSize.x || mapCoords.y < 0 || mapCoords.y >= mapSize.y)
+		return false;
+
+	return map[mapCoords.y * mapSize.x + mapCoords.x] != 0;
+}
