@@ -49,9 +49,19 @@ void GUI::render() {
 	glEnable(GL_DEPTH_TEST);
 }
 
-void GUI::updateTimer(int newTime) {
+int GUI::updateTimer(int newTime) {
 	int minutes = newTime / 60;
 	int seconds = newTime % 60;
 
 	sprintf(timer, "%d:%02d", minutes, seconds);
+	return newTime;
+}
+
+GUI::~GUI() {
+	delete background;
+	for (int i=0; i<5; ++i) {
+		delete stats[i]->icon;
+		delete stats[i]->text;
+		delete stats[i];
+	}
 }

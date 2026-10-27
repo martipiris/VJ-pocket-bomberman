@@ -23,6 +23,8 @@ public:
 	void setPosition(const glm::vec2 &pos);
 	
 	glm::vec2 getPosition() const;
+
+	void setDead();
 private:
 	// Física
 	glm::vec2 posPlayerF;    
@@ -42,6 +44,10 @@ private:
 	Sprite *sprite;
 	TileMap *map;
 
+	// State
+	bool isDead = false;
+
+	void updateMovement(int deltaTime);
 };
 
 #endif // _PLAYER_INCLUDE

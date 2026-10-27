@@ -35,8 +35,13 @@ public:
 	bool collisionMoveDown(const glm::ivec2 &pos, const glm::ivec2 &size, int *posY) const;
 	bool collisionMoveUp(const glm::ivec2 &pos, const glm::ivec2 &size, int *posY) const;
 	
-	glm::ivec2 getMapSize() const { return mapSize; } 
-	glm::ivec2 getMapPixelSize() const { return glm::ivec2(mapSize.x * tileSize, mapSize.y * tileSize); }
+	glm::ivec2 getMapSize() const;
+	glm::ivec2 getMapPixelSize() const;
+
+	glm::ivec2 tile2Pixel(const glm::ivec2& tilePos) const;
+	glm::ivec2 pixel2Tile(const glm::ivec2& pixelPos) const;
+
+	bool isTileSolid(const glm::ivec2& tilePos) const;
 
 private:
 	bool loadLevel(const string &levelFile);

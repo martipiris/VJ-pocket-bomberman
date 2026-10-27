@@ -2,6 +2,7 @@
 #define _LEVEL1_INCLUDE
 
 #include "LevelScene.h"
+#include "Monkey.h"
 #include <glm/glm.hpp>
 
 class Level1 : public LevelScene {
@@ -13,15 +14,20 @@ public:
 
 	~Level1() override = default;
 
-protected:
-	void onLevelInit() override {
+	LevelScene* create() const override {
+		return new Level1();
 	}
 
-	void onLevelUpdate(int deltaTime) override {
-	}
+private:
+	glm::ivec2 enemyCoords[4] = { glm::ivec2(1, 9), 
+								  glm::ivec2(7, 7),
+								  glm::ivec2(7, 4),
+								  glm::ivec2(12, 13)
+	};
 
-	void onLevelRender() override {
-	}
+	void onLevelInit() override;
+	void onLevelUpdate(int deltaTime) override;
+	void onLevelRender() override;
 };
 
 #endif // _LEVEL1_INCLUDE

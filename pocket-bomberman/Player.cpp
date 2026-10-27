@@ -64,6 +64,10 @@ void Player::init(const glm::ivec2 &tileMapPos, ShaderProgram &shaderProgram) {
 	sprite->setAnimationSpeed(FALL_RIGHT, 8);
 	sprite->addKeyframe(FALL_RIGHT, glm::vec2(0.8f, 0.2f));
 
+	sprite->setAnimationSpeed(DIE, 8);
+	sprite->addKeyframe(DIE, glm::vec2(0.f, 0.4f));
+	sprite->addKeyframe(DIE, glm::vec2(0.2f, 0.4f));
+
 	sprite->changeAnimation(1);
 	tileMapDispl = tileMapPos;
 	// posPlayerF se ajusta desde setPosition() que llama LevelScene después de init
@@ -71,25 +75,35 @@ void Player::init(const glm::ivec2 &tileMapPos, ShaderProgram &shaderProgram) {
 }
 
 void Player::update(int deltaTime) {
-	const float dt = float(deltaTime) / 16.0f;
-
 	sprite->update(deltaTime);
+	
+	if (!isDead) {
+		updateMovement(deltaTime);
+	}
+}
+
+void Player::updateMovement(int deltaTime) {
+	const float dt = float(deltaTime) / 16.0f;
 
 	if (Game::instance().getKey(GLFW_KEY_LEFT)) {
 		if (onGround) {
 			if (sprite->animation() != MOVE_LEFT) sprite->changeAnimation(MOVE_LEFT);
-		} else {
+		}
+		else {
 			if (sprite->animation() != JUMP_LEFT && sprite->animation() != FALL_LEFT) sprite->changeAnimation(velY < 0 ? JUMP_LEFT : FALL_LEFT);
 		}
 		posPlayerF.x -= horizSpeed * dt;
-	} else if (Game::instance().getKey(GLFW_KEY_RIGHT)) {
+	}
+	else if (Game::instance().getKey(GLFW_KEY_RIGHT)) {
 		if (onGround) {
 			if (sprite->animation() != MOVE_RIGHT) sprite->changeAnimation(MOVE_RIGHT);
-		} else {
+		}
+		else {
 			if (sprite->animation() != JUMP_RIGHT && sprite->animation() != FALL_RIGHT) sprite->changeAnimation(velY < 0 ? JUMP_RIGHT : FALL_RIGHT);
 		}
 		posPlayerF.x += horizSpeed * dt;
-	} else {
+	}
+	else {
 		if (sprite->animation() == MOVE_LEFT) sprite->changeAnimation(STAND_LEFT);
 		else if (sprite->animation() == MOVE_RIGHT) sprite->changeAnimation(STAND_RIGHT);
 	}
@@ -108,7 +122,8 @@ void Player::update(int deltaTime) {
 
 		if (sprite->animation() == MOVE_LEFT || sprite->animation() == STAND_LEFT) {
 			sprite->changeAnimation(JUMP_LEFT);
-		} else {
+		}
+		else {
 			sprite->changeAnimation(JUMP_RIGHT);
 		}
 	}
@@ -121,7 +136,8 @@ void Player::update(int deltaTime) {
 	if (velY > 0.f && !onGround) {
 		if (sprite->animation() == JUMP_LEFT || sprite->animation() == MOVE_LEFT || sprite->animation() == STAND_LEFT) {
 			sprite->changeAnimation(FALL_LEFT);
-		} else if (sprite->animation() == JUMP_RIGHT || sprite->animation() == MOVE_RIGHT || sprite->animation() == STAND_RIGHT) {
+		}
+		else if (sprite->animation() == JUMP_RIGHT || sprite->animation() == MOVE_RIGHT || sprite->animation() == STAND_RIGHT) {
 			sprite->changeAnimation(FALL_RIGHT);
 		}
 	}
@@ -132,7 +148,7 @@ void Player::update(int deltaTime) {
 
 	bool collidedVertically = false;
 
-	for (int i = 0; i < steps; ++i)	{
+	for (int i = 0; i < steps; ++i) {
 		const float nextY = posPlayerF.y + verticalStep;
 		glm::ivec2 candidate(
 			static_cast<int>(posPlayerF.x) + PLAYER_COLLISION_OFFSET.x,
@@ -149,10 +165,11 @@ void Player::update(int deltaTime) {
 
 				if (sprite->animation() == JUMP_LEFT || sprite->animation() == FALL_LEFT) sprite->changeAnimation(STAND_LEFT);
 				else if (sprite->animation() == JUMP_RIGHT || sprite->animation() == FALL_RIGHT) sprite->changeAnimation(STAND_RIGHT);
-				
+
 				break;
 			}
-		} else if (verticalStep < 0.f) {
+		}
+		else if (verticalStep < 0.f) {
 			int correctedY = candidate.y;
 
 			if (map->collisionMoveUp(candidate, SIZE_PLAYER_COLLISION, &correctedY)) {
@@ -193,9 +210,9 @@ glm::vec2 Player::getPosition() const {
 	return glm::vec2(float(tileMapDispl.x + posPlayer.x), float(tileMapDispl.y + posPlayer.y));
 }
 
-
-
-
-
-
-
+void Player::setDead() {
+	if (sprite->animation() != DIE) {
+		sprite->changeAnimation(DIE);
+	}
+	isDead = true;
+}

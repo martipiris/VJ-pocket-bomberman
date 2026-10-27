@@ -3,14 +3,19 @@
 
 #include <string>
 #include <glm/glm.hpp>
+#include <memory>
+#include <vector>
+#include <utility>
+
 #include "Scene.h"
 #include "libs/TileMap.h"
 #include "Player.h"
 #include "Camera.h"
 #include "GUI.h"
+#include "Enemy.h"
 
-#define SCREEN_OFFSET_X 16
-#define SCREEN_OFFSET_Y 16
+#define SCREEN_OFFSET_X 0
+#define SCREEN_OFFSET_Y 0
 
 class LevelScene : public Scene {
 public:
@@ -26,6 +31,8 @@ private:
 protected:
 	virtual std::string getLevelFile() const;
 
+	virtual LevelScene* create() const = 0;
+
 	glm::vec2 getInitialPlayerTilePos() const;
 
 	virtual void onLevelInit() {}
@@ -33,11 +40,20 @@ protected:
 	virtual void onLevelRender() {}
 
 	TileMap *map = nullptr;
-	Player player;
+	Player *player = nullptr;
 	GUI *gui = nullptr;
 
 	int playerInitialTileX = 4;
 	int playerInitialTileY = 13;
+
+	template <typename T>
+	T& addEnemy() {
+		auto ptr = std::make_unique<T>();
+		T& ref = *ptr;
+		enemies.push_back(std::move(ptr));
+		return ref;
+	}
+	std::vector<std::unique_ptr<Enemy>> enemies;
 
 	int timer = 240;
 
@@ -45,6 +61,10 @@ protected:
 
 private:
 	std::string m_levelFile;
+	bool isGameOver = false;
+	int gameOverTimer = 120;
+
+	bool enemyPlayerCollision() const;
 };
 
 
