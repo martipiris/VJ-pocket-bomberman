@@ -91,6 +91,7 @@ void StartingScene::updateObjects(int deltaTime, int currentTime) {
 		switch (selectedOption) {
 			case 0:
 				Game::instance().changeScene(new Level1());
+				Stats::getInstance().resetAll();
 				break;
 			case 1:
 				break;

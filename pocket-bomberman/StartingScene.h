@@ -4,6 +4,7 @@
 #include "Scene.h"
 #include "libs/Text.h"
 #include "libs/TexturedQuad.h"
+#include "Stats.h"
 #include "Game.h"
 #include "Level1.h"
 

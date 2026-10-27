@@ -41,12 +41,24 @@ void GUI::render() {
 	texProgram.setUniformMatrix4f("modelview", glm::mat4(1.0f));
 	texProgram.setUniform2f("texCoordDispl", 0.f, 0.f);
 
+	const std::string *statTexts = getStats();
+
 	for (int i=0; i<5; ++i) {
 		stats[i]->icon->render(texs);
-		stats[i]->text->render(i == 0 ? timer : "1", glm::vec2(stats[i]->x_coord + GUI_HEIGHT + 7, SCREEN_HEIGHT + 6), 45, glm::vec4(0, 0, 0, 1));
+		stats[i]->text->render(statTexts[i], glm::vec2(stats[i]->x_coord + GUI_HEIGHT + 7, SCREEN_HEIGHT + 6), 45, glm::vec4(0, 0, 0, 1));
 	}
 
 	glEnable(GL_DEPTH_TEST);
+}
+
+std::string* GUI::getStats() {
+	std::string* stats = new std::string[5];
+	stats[0] = timer;
+	stats[1] = std::to_string(Stats::getInstance().getLives());
+	stats[2] = std::to_string(enemyCount);
+	stats[3] = std::to_string(Stats::getInstance().getBombAmount());
+	stats[4] = std::to_string(Stats::getInstance().getBombRange());
+	return stats;
 }
 
 int GUI::updateTimer(int newTime) {
@@ -55,6 +67,10 @@ int GUI::updateTimer(int newTime) {
 
 	sprintf(timer, "%d:%02d", minutes, seconds);
 	return newTime;
+}
+
+void GUI::setEnemyCount(int count) {
+	enemyCount = count;
 }
 
 GUI::~GUI() {

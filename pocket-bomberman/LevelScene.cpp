@@ -42,6 +42,7 @@ void LevelScene::updateObjects(int deltaTime, int currentTime)
 		if (gameOverTimer > 0) {
 			--gameOverTimer;
 		} else {
+			Stats::getInstance().decreaseLives();
 			Game::instance().changeScene(create());
 			return;
 		}
@@ -51,6 +52,8 @@ void LevelScene::updateObjects(int deltaTime, int currentTime)
 		isGameOver = true;
 		player->setDead();
 	}
+
+	gui->setEnemyCount(enemies.size());
 
 	player->update(deltaTime);
 
