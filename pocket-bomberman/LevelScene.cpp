@@ -19,11 +19,12 @@ void LevelScene::initObjects()
 	const glm::vec2 minCoords = glm::vec2(SCREEN_OFFSET_X, SCREEN_OFFSET_Y);
 	map = TileMap::createTileMap(file, minCoords, texProgram);
 
-	player.init(glm::ivec2(SCREEN_OFFSET_X, SCREEN_OFFSET_Y), texProgram);
-	player.setPosition(getInitialPlayerTilePos());
-	player.setTileMap(map);
+	player = new Player();
+	player->init(glm::ivec2(SCREEN_OFFSET_X, SCREEN_OFFSET_Y), texProgram);
+	player->setPosition(getInitialPlayerTilePos());
+	player->setTileMap(map);
 
-	cam = new Camera(SCREEN_WIDTH, SCREEN_HEIGHT, map->getMapPixelSize(), player.getPosition());
+	cam = new Camera(SCREEN_WIDTH, SCREEN_HEIGHT, map->getMapPixelSize(), player->getPosition());
 	gui = new GUI(simpleProgram, texProgram);
 	gui->init();
 
@@ -32,26 +33,33 @@ void LevelScene::initObjects()
 
 void LevelScene::updateObjects(int deltaTime, int currentTime)
 {
+	if (enemyPlayerCollision()) {
+		isGameOver = true;
+		player->setDead();
+	}
+
 	if (isGameOver) {
 		if (gameOverTimer > 0) {
 			--gameOverTimer;
 		} else {
 			Game::instance().changeScene(create());
+			return;
 		}
 	}
 
-	gui->updateTimer(std::max(0, int(timer - currentTime / 1000)));
+	if (gui->updateTimer(std::max(0, int(timer - currentTime / 1000))) == 0 && !isGameOver) {
+		isGameOver = true;
+		player->setDead();
+	}
 
-	player.update(deltaTime);
+	player->update(deltaTime);
 
-	cam->setTarget(player.getPosition());
+	cam->setTarget(player->getPosition());
 	cam->update();
 
 	for (auto& enemy : enemies) {
 		enemy->update(deltaTime);
 	}
-
-	printf(enemyPlayerCollision() ? "Colliding\n" : "Not colliding\n");
 
 	onLevelUpdate(deltaTime);
 }
@@ -63,7 +71,7 @@ void LevelScene::renderObjects()
 	simpleProgram.setUniformMatrix4f("modelview", view);
 
 	map->render();
-	player.render(view);
+	player->render(view);
 
 	for (auto& enemy : enemies) {
 		enemy->render(view);
@@ -75,10 +83,10 @@ void LevelScene::renderObjects()
 }
 
 void LevelScene::deleteObjects() {
-	if (map) {
-		delete map;
-		map = nullptr;
-	}
+	delete map;
+	delete gui;
+	delete player;
+	delete cam;
 }
 
 std::string LevelScene::getLevelFile() const {
@@ -96,7 +104,7 @@ glm::vec2 LevelScene::getInitialPlayerTilePos() const {
 bool LevelScene::enemyPlayerCollision() const {
 	for (const auto& enemy : enemies) {
 		const glm::vec2 enemyPos = enemy->getPosition();
-		const glm::vec2 playerPos = player.getPosition();
+		const glm::vec2 playerPos = player->getPosition();
 		if (std::abs(enemyPos.x - playerPos.x) < SIZE_ENEMY_COLLISION.x &&
 			std::abs(enemyPos.y - playerPos.y) < SIZE_ENEMY_COLLISION.y) {
 			return true;

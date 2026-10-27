@@ -40,7 +40,7 @@ protected:
 	virtual void onLevelRender() {}
 
 	TileMap *map = nullptr;
-	Player player;
+	Player *player = nullptr;
 	GUI *gui = nullptr;
 
 	int playerInitialTileX = 4;
@@ -62,7 +62,7 @@ protected:
 private:
 	std::string m_levelFile;
 	bool isGameOver = false;
-	int gameOverTimer = 180;
+	int gameOverTimer = 120;
 
 	bool enemyPlayerCollision() const;
 };

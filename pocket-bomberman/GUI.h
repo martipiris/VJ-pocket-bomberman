@@ -24,7 +24,7 @@ public:
 	void init();
 	void render();
 
-	void updateTimer(int newTime);
+	int updateTimer(int newTime);
 private:
 	const int x_coords[5] = {20, 190, 260, 330, 400};
 	glm::vec2 texCoords[5][2] = {
