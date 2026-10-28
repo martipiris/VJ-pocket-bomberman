@@ -2,6 +2,7 @@
 #include <cmath>
 #include <glm/gtc/matrix_transform.hpp>
 #include "LevelScene.h"
+#include "StartingScene.h"
 
 LevelScene::LevelScene(const std::string &levelFile)
 	: m_levelFile(levelFile), map(nullptr)
@@ -33,19 +34,23 @@ void LevelScene::initObjects()
 
 void LevelScene::updateObjects(int deltaTime, int currentTime)
 {
-	if (enemyPlayerCollision()) {
-		isGameOver = true;
-		player->setDead();
-	}
-
 	if (isGameOver) {
 		if (gameOverTimer > 0) {
 			--gameOverTimer;
 		} else {
-			Stats::getInstance().decreaseLives();
-			Game::instance().changeScene(create());
+			if (Stats::getInstance().getLives() == 0) {
+				Game::instance().changeScene(new StartingScene());
+			} else {
+				Stats::getInstance().decreaseLives();
+				Game::instance().changeScene(create());
+			}
 			return;
 		}
+	}
+
+	if (enemyPlayerCollision() && !isGameOver) {
+		isGameOver = true;
+		player->setDead();
 	}
 
 	if (gui->updateTimer(std::max(0, int(timer - currentTime / 1000))) == 0 && !isGameOver) {

@@ -1,7 +1,10 @@
 #include "StartingScene.h"
+#include <GL/glew.h>
 #include <glm/gtc/matrix_transform.hpp>
 
 void StartingScene::renderObjects() {
+	glDisable(GL_DEPTH_TEST);
+
 	title->render(texs[0]);
 	menu_bg->render(texs[1]);
 	character->render(texs[3]);
