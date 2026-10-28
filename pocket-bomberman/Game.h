@@ -16,6 +16,10 @@
 #define CONFIRM_KEY GLFW_KEY_Z
 #define RETURN_KEY GLFW_KEY_X
 
+enum SCENES {
+	STARTING, INSTRUCTIONS, CREDITS, LV1
+};
+
 // Game is a singleton (a class with a single instance) that represents our whole application
 
 class Game

@@ -2,6 +2,8 @@
 #include <GL/glew.h>
 #include <glm/gtc/matrix_transform.hpp>
 
+//#include "CreditsScene.h"
+
 void StartingScene::renderObjects() {
 	glDisable(GL_DEPTH_TEST);
 
@@ -99,6 +101,7 @@ void StartingScene::updateObjects(int deltaTime, int currentTime) {
 			case 1:
 				break;
 			case 2:
+				//Game::instance().changeScene(new CreditsScene());
 				break;
 		}
 	}
