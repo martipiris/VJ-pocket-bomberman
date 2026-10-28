@@ -6,6 +6,7 @@
 #include "libs/Text.h"
 #include "libs/ShaderProgram.h"
 
+#include "Stats.h"
 #include "Game.h"
 
 #define GUI_HEIGHT 30
@@ -25,6 +26,7 @@ public:
 	void render();
 
 	int updateTimer(int newTime);
+	void setEnemyCount(int count);
 private:
 	const int x_coords[5] = {20, 190, 260, 330, 400};
 	glm::vec2 texCoords[5][2] = {
@@ -36,6 +38,8 @@ private:
 	};
 
 	char timer[6];
+	int enemyCount = 0;
+	std::string* getStats();
 
 	Quad *background;
 	Stat *stats[5];
