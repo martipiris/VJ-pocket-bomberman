@@ -27,6 +27,7 @@
     <ClInclude Include="libs\TexturedQuad.h" />
     <ClInclude Include="libs\TileMap.h" />
     <ClInclude Include="Monkey.h" />
+    <ClInclude Include="Pacman.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="StartingScene.h" />
@@ -49,6 +50,7 @@
     <ClCompile Include="libs\TileMap.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Monkey.cpp" />
+    <ClCompile Include="Pacman.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="StartingScene.cpp" />

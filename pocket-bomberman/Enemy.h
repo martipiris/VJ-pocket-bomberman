@@ -21,6 +21,9 @@ public:
 	void setPosition(const glm::vec2& pos);
 	glm::vec2 getPosition() const;
 protected:
+	int state;
+	int timer;
+
 	glm::ivec2 posEnemy;
 	glm::ivec2 mapDispl;
 
