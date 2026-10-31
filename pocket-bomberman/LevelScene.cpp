@@ -39,10 +39,10 @@ void LevelScene::updateObjects(int deltaTime, int currentTime)
 			--gameOverTimer;
 		} else {
 			if (Stats::getInstance().getLives() == 0) {
-				Game::instance().changeScene(new StartingScene());
+				Game::instance().changeScene(STARTING);
 			} else {
 				Stats::getInstance().decreaseLives();
-				Game::instance().changeScene(create());
+				Game::instance().changeScene(id());
 			}
 			return;
 		}

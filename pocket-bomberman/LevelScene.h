@@ -31,7 +31,7 @@ private:
 protected:
 	virtual std::string getLevelFile() const;
 
-	virtual LevelScene* create() const = 0;
+	virtual int id() const = 0;
 
 	glm::vec2 getInitialPlayerTilePos() const;
 

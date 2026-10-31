@@ -12,8 +12,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="CreditsScene.h" />
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="GUI.h" />
+    <ClInclude Include="InstructionsScene.h" />
     <ClInclude Include="Level1.h" />
     <ClInclude Include="LevelScene.h" />
     <ClInclude Include="Game.h" />
@@ -34,8 +36,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="CreditsScene.cpp" />
     <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="GUI.cpp" />
+    <ClCompile Include="InstructionsScene.cpp" />
     <ClCompile Include="Level1.cpp" />
     <ClCompile Include="LevelScene.cpp" />
     <ClCompile Include="Game.cpp" />
