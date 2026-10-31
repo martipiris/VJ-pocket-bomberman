@@ -2,6 +2,8 @@
 #include <GLFW/glfw3.h>
 #include "Game.h"
 #include "StartingScene.h"
+#include "CreditsScene.h"
+#include "InstructionsScene.h"
 
 Game::Game() {}
 
@@ -26,11 +28,30 @@ void Game::render()
 	scene->render();
 }
 
-void Game::changeScene(Scene* newScene) {
+void Game::changeScene(int id) {
 	if (scene != nullptr) {
 		scene->deleteScene();
 		delete scene;
 		scene = nullptr;
+	}
+
+	Scene* newScene;
+	switch (id) {
+	case STARTING:
+		newScene = new StartingScene();
+		break;
+	case INSTRUCTIONS:
+		newScene = new InstructionsScene();
+		break;
+	case CREDITS:
+		newScene = new CreditsScene();
+		break;
+	case LV1:
+		newScene = new Level1();
+		break;
+	default:
+		printf("ERROR: couldn't load scene %d\n", id);
+		newScene = new StartingScene();
 	}
 
 	scene = newScene;

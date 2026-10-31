@@ -49,7 +49,7 @@ public:
 	bool getKey(int key) const;
 	bool isKeyPressedOnce(int key);
 
-	void changeScene(Scene* newScene);
+	void changeScene(int scene);
 
 private:
 	bool bPlay; // Continue to play game?

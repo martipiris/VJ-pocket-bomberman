@@ -2,8 +2,6 @@
 #include <GL/glew.h>
 #include <glm/gtc/matrix_transform.hpp>
 
-//#include "CreditsScene.h"
-
 void StartingScene::renderObjects() {
 	glDisable(GL_DEPTH_TEST);
 
@@ -95,13 +93,14 @@ void StartingScene::updateObjects(int deltaTime, int currentTime) {
 	if (Game::instance().isKeyPressedOnce(CONFIRM_KEY)) {
 		switch (selectedOption) {
 			case 0:
-				Game::instance().changeScene(new Level1());
+				Game::instance().changeScene(LV1);
 				Stats::getInstance().resetAll();
 				break;
 			case 1:
+				Game::instance().changeScene(INSTRUCTIONS);
 				break;
 			case 2:
-				//Game::instance().changeScene(new CreditsScene());
+				Game::instance().changeScene(CREDITS);
 				break;
 		}
 	}

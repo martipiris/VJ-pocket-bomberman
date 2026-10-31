@@ -14,19 +14,22 @@ public:
 	void deleteObjects();
 
 private:
-	Text* title;
+	Text title;
 
-	Text* creditTexts[7];
+	static const int creditLines = 7;
 
-	string credits[7] = {
-		"Infraestructura de motor - Marti",
-		"Programació d'enemics i jugador - Marti",
+	Text* creditTexts[creditLines];
+	string credits[creditLines] = {
+		"Programacio d'enemics i jugador - Marti",
 		"Disseny de so - Marti",
+		"GUI i menus - Marti",
 		"Disseny de mapes - Oscar",
-		"Interacció de bombes - Oscar",
+		"Interaccio de bombes - Oscar",
 		"Art personalitzat - Oscar",
 		"Utilitzant recursos de Pocket Bomberman"
 	};
+
+	Text backText;
 };
 
 #endif //_CREDITS_SCENE_INCLUDE

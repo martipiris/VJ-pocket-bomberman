@@ -14,8 +14,8 @@ public:
 
 	~Level1() override = default;
 
-	LevelScene* create() const override {
-		return new Level1();
+	int id() const override {
+		return LV1;
 	}
 
 private:
