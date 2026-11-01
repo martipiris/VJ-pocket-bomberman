@@ -14,12 +14,14 @@ public:
 
 	~Level2() override = default;
 
-	LevelScene* create() const override {
-		return new Level2();
+	int id() const override {
+		return LV2;
 	}
 
-	int playerInitialTileX = 4;
-	int playerInitialTileY = 29;
+protected:
+	glm::vec2 getPlayerInitialTile() const override {
+		return glm::vec2(4, 29);
+	}
 
 private:
 	glm::ivec2 enemyCoords[4] = { glm::ivec2(1, 9),
