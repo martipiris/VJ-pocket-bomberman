@@ -93,12 +93,14 @@ void StartingScene::updateObjects(int deltaTime, int currentTime) {
 	if (Game::instance().isKeyPressedOnce(CONFIRM_KEY)) {
 		switch (selectedOption) {
 			case 0:
-				Game::instance().changeScene(new Level1());
+				Game::instance().changeScene(LV1);
 				Stats::getInstance().resetAll();
 				break;
 			case 1:
+				Game::instance().changeScene(INSTRUCTIONS);
 				break;
 			case 2:
+				Game::instance().changeScene(CREDITS);
 				break;
 		}
 	}

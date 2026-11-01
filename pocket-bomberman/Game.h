@@ -16,6 +16,10 @@
 #define CONFIRM_KEY GLFW_KEY_Z
 #define RETURN_KEY GLFW_KEY_X
 
+enum SCENES {
+	STARTING, INSTRUCTIONS, CREDITS, LV1
+};
+
 // Game is a singleton (a class with a single instance) that represents our whole application
 
 class Game
@@ -45,7 +49,7 @@ public:
 	bool getKey(int key) const;
 	bool isKeyPressedOnce(int key);
 
-	void changeScene(Scene* newScene);
+	void changeScene(int scene);
 
 private:
 	bool bPlay; // Continue to play game?
