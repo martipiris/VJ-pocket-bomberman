@@ -17,6 +17,10 @@
     <ClInclude Include="GUI.h" />
     <ClInclude Include="InstructionsScene.h" />
     <ClInclude Include="Level1.h" />
+    <ClInclude Include="Level2.h" />
+    <ClInclude Include="Level3.h" />
+    <ClInclude Include="Level4.h" />
+    <ClInclude Include="Level5.h" />
     <ClInclude Include="LevelScene.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="libs\AnimKeyframes.h" />
@@ -41,6 +45,10 @@
     <ClCompile Include="GUI.cpp" />
     <ClCompile Include="InstructionsScene.cpp" />
     <ClCompile Include="Level1.cpp" />
+    <ClCompile Include="Level2.cpp" />
+    <ClCompile Include="Level3.cpp" />
+    <ClCompile Include="Level4.cpp" />
+    <ClCompile Include="Level5.cpp" />
     <ClCompile Include="LevelScene.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="libs\Quad.cpp" />

@@ -17,7 +17,8 @@
 #define RETURN_KEY GLFW_KEY_X
 
 enum SCENES {
-	STARTING, INSTRUCTIONS, CREDITS, LV1
+	STARTING, INSTRUCTIONS, CREDITS,
+	LV1, LV2, LV3, LV4, LV5
 };
 
 // Game is a singleton (a class with a single instance) that represents our whole application

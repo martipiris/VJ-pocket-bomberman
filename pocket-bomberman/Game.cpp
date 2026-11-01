@@ -4,6 +4,10 @@
 #include "StartingScene.h"
 #include "CreditsScene.h"
 #include "InstructionsScene.h"
+#include "Level2.h"
+#include "Level3.h"
+#include "Level4.h"
+#include "Level5.h"
 
 Game::Game() {}
 
@@ -48,6 +52,18 @@ void Game::changeScene(int id) {
 		break;
 	case LV1:
 		newScene = new Level1();
+		break;
+	case LV2:
+		newScene = new Level2();
+		break;
+	case LV3:
+		newScene = new Level3();
+		break;
+	case LV4:
+		newScene = new Level4();
+		break;
+	case LV5:
+		newScene = new Level5();
 		break;
 	default:
 		printf("ERROR: couldn't load scene %d\n", id);

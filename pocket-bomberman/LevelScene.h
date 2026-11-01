@@ -33,6 +33,10 @@ protected:
 
 	virtual int id() const = 0;
 
+	virtual glm::vec2 getPlayerInitialTile() const {
+		return glm::vec2(4, 13);
+	}
+	
 	glm::vec2 getInitialPlayerTilePos() const;
 
 	virtual void onLevelInit() {}
@@ -42,9 +46,6 @@ protected:
 	TileMap *map = nullptr;
 	Player *player = nullptr;
 	GUI *gui = nullptr;
-
-	int playerInitialTileX = 4;
-	int playerInitialTileY = 13;
 
 	template <typename T>
 	T& addEnemy() {

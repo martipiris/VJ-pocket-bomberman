@@ -106,7 +106,9 @@ glm::vec2 LevelScene::getInitialPlayerTilePos() const {
 		std::cerr << "Error: map is null in getInitialPlayerTilePos()" << std::endl;
 		return glm::vec2(0.f, 0.f);
 	}
-	return glm::vec2(playerInitialTileX*map->getTileSize(), playerInitialTileY * map->getTileSize());
+
+	glm::vec2 pos = getPlayerInitialTile();
+	return glm::vec2(pos.x * map->getTileSize(), pos.y * map->getTileSize());
 }
 
 bool LevelScene::enemyPlayerCollision() const {
