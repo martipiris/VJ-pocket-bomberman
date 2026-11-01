@@ -17,6 +17,12 @@ void Scene::init()
 void Scene::update(int deltaTime)
 {
 	currentTime += deltaTime;
+
+	// Debug commands
+	if (Game::instance().getKey(GLFW_KEY_1)) {
+		Game::instance().changeScene(LV1);
+	}
+
 	updateObjects(deltaTime, currentTime);
 }
 

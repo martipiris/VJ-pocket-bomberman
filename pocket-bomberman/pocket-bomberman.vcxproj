@@ -15,6 +15,7 @@
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="GUI.h" />
     <ClInclude Include="Level1.h" />
+    <ClInclude Include="Level2.h" />
     <ClInclude Include="LevelScene.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="libs\AnimKeyframes.h" />
@@ -37,6 +38,7 @@
     <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="GUI.cpp" />
     <ClCompile Include="Level1.cpp" />
+    <ClCompile Include="Level2.cpp" />
     <ClCompile Include="LevelScene.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="libs\Quad.cpp" />
