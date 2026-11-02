@@ -7,18 +7,20 @@ Enemy::~Enemy() {
 		delete sprite;
 }
 
-void Enemy::init(const glm::ivec2& tileMapPos, TileMap* tileMap, ShaderProgram& shaderProgram) {
-	mapDispl = tileMapPos;
+void Enemy::init(const glm::ivec2& tileMapPos, TileMap* tileMap, Player* player, ShaderProgram& shaderProgram) {
 	map = tileMap;
+	this->player = player;
 	texProgram = shaderProgram;
+	
 	init();
+	setPosition(tileMapPos);
 }
 
 void Enemy::update(int deltaTime) {
 	sprite->update(deltaTime);
 
 	updateMovement();
-	sprite->setPosition(glm::ivec2(mapDispl.x + posEnemy.x, mapDispl.y + posEnemy.y));
+	sprite->setPosition(glm::ivec2(posEnemy.x, posEnemy.y));
 }
 
 void Enemy::render(const glm::mat4& view) {
@@ -31,7 +33,7 @@ void Enemy::setPosition(const glm::vec2& pos) {
 }
 
 glm::vec2 Enemy::getPosition() const {
-	return glm::ivec2(mapDispl.x + posEnemy.x, mapDispl.y + posEnemy.y);
+	return glm::ivec2(posEnemy.x, posEnemy.y);
 }
 
 

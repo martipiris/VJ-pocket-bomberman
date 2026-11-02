@@ -9,8 +9,10 @@ public:
 	~Monkey();
 
 	void init() override;
+
 	void updateMovement() override;
 private:
+	
 };
 
 #endif // MONKEY_INCLUDE

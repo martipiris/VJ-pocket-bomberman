@@ -3,6 +3,7 @@
 
 #include "libs/Sprite.h"
 #include "libs/TileMap.h"
+#include "Player.h"
 
 #define SIZE_ENEMY glm::ivec2(64, 64)
 #define SIZE_ENEMY_COLLISION glm::ivec2(48, 64)
@@ -13,7 +14,7 @@ public:
 	Enemy();
 	virtual ~Enemy();
 
-	void init(const glm::ivec2& tileMapPos, TileMap* tileMap, ShaderProgram& shaderProgram);
+	void init(const glm::ivec2& tileMapPos, TileMap* tileMap, Player* player, ShaderProgram& shaderProgram);
 
 	void update(int deltaTime);
 	void render(const glm::mat4& view);
@@ -25,9 +26,9 @@ protected:
 	int timer;
 
 	glm::ivec2 posEnemy;
-	glm::ivec2 mapDispl;
 
 	TileMap* map;
+	Player* player;
 
 	Texture spritesheet;
 	Sprite* sprite;
