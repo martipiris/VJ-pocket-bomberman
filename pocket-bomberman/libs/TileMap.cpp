@@ -126,6 +126,8 @@ bool TileMap::loadLevel(const string& levelFile)
 
 	map = new int[mapSize.x * mapSize.y];
 
+	dynamicSolid.assign(mapSize.x * mapSize.y, 0);
+
 	for (int j = 0; j < mapSize.y; ++j)
 	{
 		for (int i = 0; i < mapSize.x; ++i)
@@ -217,7 +219,7 @@ bool TileMap::collisionMoveLeft(const glm::ivec2 &pos, const glm::ivec2 &size) c
 	y1 = (pos.y + size.y - 1) / tileSize;
 	for(int y=y0; y<=y1; y++)
 	{
-		if(map[y*mapSize.x+x] != 0)
+		if(solidAt(x, y))
 			return true;
 	}
 	
@@ -233,7 +235,7 @@ bool TileMap::collisionMoveRight(const glm::ivec2 &pos, const glm::ivec2 &size) 
 	y1 = (pos.y + size.y - 1) / tileSize;
 	for(int y=y0; y<=y1; y++)
 	{
-		if(map[y*mapSize.x+x] != 0)
+		if(solidAt(x, y))
 			return true;
 	}
 	
@@ -258,7 +260,7 @@ bool TileMap::collisionMoveDown(const glm::ivec2& pos, const glm::ivec2& size, i
 
 	for (int x = x0; x <= x1; ++x)
 	{
-		if (map[row * mapSize.x + x] != 0)
+		if (solidAt(x, row))
 		{
 			*posY = row * tileSize - size.y;
 			return true;
@@ -284,7 +286,7 @@ bool TileMap::collisionMoveUp(const glm::ivec2 &pos, const glm::ivec2 &size, int
 
     for (int x = x0; x <= x1; x++)
     {
-        if (map[y * mapSize.x + x] != 0)
+        if (solidAt(x, y))
         {
             *posY = tileSize * (y + 1);
             return true;
@@ -308,5 +310,19 @@ bool TileMap::isTileSolid(const glm::ivec2& tilePos) const
 	if (mapCoords.x < 0 || mapCoords.x >= mapSize.x || mapCoords.y < 0 || mapCoords.y >= mapSize.y)
 		return false;
 
-	return map[mapCoords.y * mapSize.x + mapCoords.x] != 0;
+	return solidAt(mapCoords.x, mapCoords.y);
+}
+
+void TileMap::setDynamicSolid(const glm::ivec2& tile, bool solid)
+{
+	if (tile.x < 0 || tile.x >= mapSize.x || tile.y < 0 || tile.y >= mapSize.y)
+		return;
+	dynamicSolid[tile.y * mapSize.x + tile.x] = solid ? 1 : 0;
+}
+
+bool TileMap::solidAt(int x, int y) const
+{
+	if (x < 0 || x >= mapSize.x || y < 0 || y >= mapSize.y)
+		return false;
+	return map[y * mapSize.x + x] != 0 || dynamicSolid[y * mapSize.x + x] != 0;
 }
