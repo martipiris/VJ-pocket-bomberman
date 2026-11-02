@@ -5,6 +5,7 @@
 #include <glm/glm.hpp>
 #include "Texture.h"
 #include "ShaderProgram.h"
+#include <vector>
 
 
 // Class Tilemap is capable of loading a tile map from a text file in a very
@@ -43,6 +44,8 @@ public:
 
 	bool isTileSolid(const glm::ivec2& tilePos) const;
 
+	void setDynamicSolid(const glm::ivec2& tile, bool solid);
+
 private:
 	bool loadLevel(const string &levelFile);
 	void prepareArrays(const glm::vec2 &minCoords, ShaderProgram &program);
@@ -57,6 +60,8 @@ private:
 	Texture tilesheet;
 	glm::vec2 tileTexSize;
 	int *map;
+	bool solidAt(int x, int y) const;
+	std::vector<char> dynamicSolid;
 
 };
 

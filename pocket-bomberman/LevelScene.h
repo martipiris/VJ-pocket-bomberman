@@ -13,6 +13,7 @@
 #include "Camera.h"
 #include "GUI.h"
 #include "Enemy.h"
+#include "BombManager.h"
 
 #define SCREEN_OFFSET_X 0
 #define SCREEN_OFFSET_Y 0
@@ -31,8 +32,12 @@ private:
 protected:
 	virtual std::string getLevelFile() const;
 
-	virtual LevelScene* create() const = 0;
+	virtual int id() const = 0;
 
+	virtual glm::vec2 getPlayerInitialTile() const {
+		return glm::vec2(4, 13);
+	}
+	
 	glm::vec2 getInitialPlayerTilePos() const;
 
 	virtual void onLevelInit() {}
@@ -42,9 +47,6 @@ protected:
 	TileMap *map = nullptr;
 	Player *player = nullptr;
 	GUI *gui = nullptr;
-
-	int playerInitialTileX = 4;
-	int playerInitialTileY = 13;
 
 	template <typename T>
 	T& addEnemy() {
@@ -57,7 +59,10 @@ protected:
 
 	int timer = 240;
 
-	Camera *cam;
+	BombManager* bombs = nullptr;
+	int maxBombs = 1; 
+	int bombRange = 1;  
+	Camera* cam = nullptr;        
 
 private:
 	std::string m_levelFile;

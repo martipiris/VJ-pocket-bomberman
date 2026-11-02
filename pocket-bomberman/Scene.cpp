@@ -18,6 +18,21 @@ void Scene::update(int deltaTime)
 {
 	currentTime += deltaTime;
 	updateObjects(deltaTime, currentTime);
+
+	// Debug commands
+	if (Game::instance().isKeyPressedOnce(GLFW_KEY_1)) {
+		Game::instance().changeScene(LV1);
+	} else if (Game::instance().isKeyPressedOnce(GLFW_KEY_2)) {
+		Game::instance().changeScene(LV2);
+	} else if (Game::instance().isKeyPressedOnce(GLFW_KEY_3)) {
+		Game::instance().changeScene(LV3);
+	} else if (Game::instance().isKeyPressedOnce(GLFW_KEY_4)) {
+		Game::instance().changeScene(LV4);
+	} else if (Game::instance().isKeyPressedOnce(GLFW_KEY_5)) {
+		Game::instance().changeScene(LV5);
+	}
+
+	
 }
 
 void Scene::render()

@@ -2,11 +2,18 @@
 #include <GLFW/glfw3.h>
 #include "Game.h"
 #include "StartingScene.h"
+#include "CreditsScene.h"
+#include "InstructionsScene.h"
+#include "Level2.h"
+#include "Level3.h"
+#include "Level4.h"
+#include "Level5.h"
 
 Game::Game() {}
 
 void Game::init()
 {
+	glDepthFunc(GL_LEQUAL);
 	bPlay = true;
 	glClearColor(1, 1, 1, 1);
 	scene = new StartingScene();
@@ -26,11 +33,42 @@ void Game::render()
 	scene->render();
 }
 
-void Game::changeScene(Scene* newScene) {
+void Game::changeScene(int id) {
 	if (scene != nullptr) {
 		scene->deleteScene();
 		delete scene;
 		scene = nullptr;
+	}
+
+	Scene* newScene;
+	switch (id) {
+	case STARTING:
+		newScene = new StartingScene();
+		break;
+	case INSTRUCTIONS:
+		newScene = new InstructionsScene();
+		break;
+	case CREDITS:
+		newScene = new CreditsScene();
+		break;
+	case LV1:
+		newScene = new Level1();
+		break;
+	case LV2:
+		newScene = new Level2();
+		break;
+	case LV3:
+		newScene = new Level3();
+		break;
+	case LV4:
+		newScene = new Level4();
+		break;
+	case LV5:
+		newScene = new Level5();
+		break;
+	default:
+		printf("ERROR: couldn't load scene %d\n", id);
+		newScene = new StartingScene();
 	}
 
 	scene = newScene;

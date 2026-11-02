@@ -3,6 +3,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include "LevelScene.h"
 #include "StartingScene.h"
+#include <algorithm>
 
 LevelScene::LevelScene(const std::string &levelFile)
 	: m_levelFile(levelFile), map(nullptr)
@@ -19,6 +20,8 @@ void LevelScene::initObjects()
 	const std::string file = getLevelFile();
 	const glm::vec2 minCoords = glm::vec2(SCREEN_OFFSET_X, SCREEN_OFFSET_Y);
 	map = TileMap::createTileMap(file, minCoords, texProgram);
+
+	bombs = new BombManager(map, texProgram, maxBombs, bombRange);
 
 	player = new Player();
 	player->init(glm::ivec2(SCREEN_OFFSET_X, SCREEN_OFFSET_Y), texProgram);
@@ -39,10 +42,10 @@ void LevelScene::updateObjects(int deltaTime, int currentTime)
 			--gameOverTimer;
 		} else {
 			if (Stats::getInstance().getLives() == 0) {
-				Game::instance().changeScene(new StartingScene());
+				Game::instance().changeScene(STARTING);
 			} else {
 				Stats::getInstance().decreaseLives();
-				Game::instance().changeScene(create());
+				Game::instance().changeScene(id());
 			}
 			return;
 		}
@@ -62,6 +65,29 @@ void LevelScene::updateObjects(int deltaTime, int currentTime)
 
 	player->update(deltaTime);
 
+	const glm::vec2 p = player->getPosition();
+	const glm::ivec2 boxPos = glm::ivec2(p) + PLAYER_COLLISION_OFFSET;
+
+	if (!isGameOver && Game::instance().isKeyPressedOnce(GLFW_KEY_Z)) {
+		// Tile under the player's feet, horizontally centered
+		glm::ivec2 feet(int(p.x) + SIZE_PLAYER.x / 2, int(p.y) + SIZE_PLAYER.y - 1);
+		bombs->tryPlace(map->pixel2Tile(feet));
+	}
+
+	bombs->update(deltaTime, boxPos, SIZE_PLAYER_COLLISION);
+
+	// Explosion kills the player
+	if (!isGameOver && bombs->hits(boxPos, SIZE_PLAYER_COLLISION)) {
+		isGameOver = true;
+		player->setDead();
+	}
+
+	// Explosion kills enemies
+	enemies.erase(std::remove_if(enemies.begin(), enemies.end(),
+		[&](const std::unique_ptr<Enemy>& e) {
+			return bombs->hits(glm::ivec2(e->getPosition()) + ENEMY_COLLISION_OFFSET, SIZE_ENEMY_COLLISION);
+		}), enemies.end());
+
 	cam->setTarget(player->getPosition());
 	cam->update();
 
@@ -76,9 +102,10 @@ void LevelScene::renderObjects()
 {
 	glm::mat4 view = cam->getViewMatrix();
 	texProgram.setUniformMatrix4f("modelview", view);
-	simpleProgram.setUniformMatrix4f("modelview", view);
+	// simpleProgram.setUniformMatrix4f("modelview", view);
 
 	map->render();
+	bombs->render(view);
 	player->render(view);
 
 	for (auto& enemy : enemies) {
@@ -91,10 +118,11 @@ void LevelScene::renderObjects()
 }
 
 void LevelScene::deleteObjects() {
-	delete map;
-	delete gui;
-	delete player;
-	delete cam;
+	delete bombs;  bombs = nullptr;
+	delete map;    map = nullptr;
+	delete gui;    gui = nullptr;
+	delete player; player = nullptr;
+	delete cam;    cam = nullptr;
 }
 
 std::string LevelScene::getLevelFile() const {
@@ -106,7 +134,9 @@ glm::vec2 LevelScene::getInitialPlayerTilePos() const {
 		std::cerr << "Error: map is null in getInitialPlayerTilePos()" << std::endl;
 		return glm::vec2(0.f, 0.f);
 	}
-	return glm::vec2(playerInitialTileX*map->getTileSize(), playerInitialTileY * map->getTileSize());
+
+	glm::vec2 pos = getPlayerInitialTile();
+	return glm::vec2(pos.x * map->getTileSize(), pos.y * map->getTileSize());
 }
 
 bool LevelScene::enemyPlayerCollision() const {
