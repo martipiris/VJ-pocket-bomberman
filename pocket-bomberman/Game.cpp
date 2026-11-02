@@ -13,6 +13,7 @@ Game::Game() {}
 
 void Game::init()
 {
+	glDepthFunc(GL_LEQUAL);
 	bPlay = true;
 	glClearColor(1, 1, 1, 1);
 	scene = new StartingScene();

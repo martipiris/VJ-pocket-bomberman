@@ -13,6 +13,7 @@
 #include "Camera.h"
 #include "GUI.h"
 #include "Enemy.h"
+#include "BombManager.h"
 
 #define SCREEN_OFFSET_X 0
 #define SCREEN_OFFSET_Y 0
@@ -58,7 +59,10 @@ protected:
 
 	int timer = 240;
 
-	Camera *cam;
+	BombManager* bombs = nullptr;
+	int maxBombs = 1; 
+	int bombRange = 1;  
+	Camera* cam = nullptr;        
 
 private:
 	std::string m_levelFile;
