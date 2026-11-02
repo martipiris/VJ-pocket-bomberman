@@ -68,7 +68,7 @@ void LevelScene::updateObjects(int deltaTime, int currentTime)
 	const glm::vec2 p = player->getPosition();
 	const glm::ivec2 boxPos = glm::ivec2(p) + PLAYER_COLLISION_OFFSET;
 
-	if (!isGameOver && Game::instance().isKeyPressedOnce(GLFW_KEY_Z)) {
+	if (!isGameOver && Game::instance().isKeyPressedOnce(CONFIRM_KEY)) {
 		// Tile under the player's feet, horizontally centered
 		glm::ivec2 feet(int(p.x) + SIZE_PLAYER.x / 2, int(p.y) + SIZE_PLAYER.y - 1);
 		bombs->tryPlace(map->pixel2Tile(feet));
