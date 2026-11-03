@@ -14,6 +14,8 @@
 #include "GUI.h"
 #include "Enemy.h"
 #include "BombManager.h"
+#include "PowerUpManager.h"
+#include "Stats.h"
 
 #define SCREEN_OFFSET_X 0
 #define SCREEN_OFFSET_Y 0
@@ -60,8 +62,7 @@ protected:
 	int timer = 240;
 
 	BombManager* bombs = nullptr;
-	int maxBombs = 1; 
-	int bombRange = 1;  
+	PowerUpManager* powerUps = nullptr;
 	Camera* cam = nullptr;        
 
 private:
@@ -70,6 +71,7 @@ private:
 	int gameOverTimer = 120;
 
 	bool enemyPlayerCollision() const;
+	void hurtPlayer();
 };
 
 

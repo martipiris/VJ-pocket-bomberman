@@ -4,14 +4,12 @@
 #include <memory>
 #include <vector>
 #include "Bomb.h"
+#include "Stats.h"
 
 class BombManager {
 public:
-	BombManager(TileMap* map, ShaderProgram& program, int maxBombs, int range = 1);
+	BombManager(TileMap* map, ShaderProgram& program);
 
-	void setRange(int r) { range = r; }
-	void increaseRange() { ++range; }
-	int getRange() const { return range; }
 
 	bool hits(const glm::ivec2& boxPos, const glm::ivec2& boxSize) const;
 
@@ -19,18 +17,19 @@ public:
 	void update(int deltaTime, const glm::ivec2& boxPos, const glm::ivec2& boxSize);
 	void render(const glm::mat4& view);
 
-	int available() const { return maxBombs - int(bombs.size()); }
-	int maximum() const { return maxBombs; }
+	int available() const { return maximum() - int(bombs.size()); }
+	int maximum() const { return Stats::getInstance().getBombAmount(); }
+
+	std::vector<glm::ivec2> takeDestroyedTiles();   // returns and clears the list
 
 private:
 	TileMap* map;
 	ShaderProgram& program;
 	Texture texture;               // shared by every bomb
-	int maxBombs;
 	std::vector<std::unique_ptr<Bomb>> bombs;
-	int range;
 	std::vector<BlastTile> computeBlast(const Bomb& src) const;
 	bool blocked(const glm::ivec2& tile, const Bomb* self) const;
+	std::vector<glm::ivec2> destroyedTiles;
 };
 
 #endif

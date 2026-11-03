@@ -46,6 +46,9 @@ public:
 
 	void setDynamicSolid(const glm::ivec2& tile, bool solid);
 
+	bool isDestructible(const glm::ivec2& tile) const;  
+	bool destroyTile(const glm::ivec2& tile);            
+
 private:
 	bool loadLevel(const string &levelFile);
 	void prepareArrays(const glm::vec2 &minCoords, ShaderProgram &program);
@@ -60,8 +63,12 @@ private:
 	Texture tilesheet;
 	glm::vec2 tileTexSize;
 	int *map;
+
 	bool solidAt(int x, int y) const;
 	std::vector<char> dynamicSolid;
+
+	void uploadVertices();
+	glm::vec2 origin;
 
 };
 

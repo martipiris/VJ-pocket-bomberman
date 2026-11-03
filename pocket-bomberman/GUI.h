@@ -37,7 +37,7 @@ private:
 		{glm::vec2(0.0f, 0.0f), glm::vec2(0.25f, 0.5f)}
 	};
 
-	char timer[6];
+	char timer[6] = "0:00";
 	int enemyCount = 0;
 	std::string* getStats();
 
