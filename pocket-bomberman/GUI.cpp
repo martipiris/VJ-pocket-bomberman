@@ -65,7 +65,7 @@ int GUI::updateTimer(int newTime) {
 	int minutes = newTime / 60;
 	int seconds = newTime % 60;
 
-	sprintf_s(timer, "%d:%02d", minutes, seconds);
+	sprintf_s(timer, sizeof(timer), "%d:%02d", minutes, seconds);
 	return newTime;
 }
 

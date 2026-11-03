@@ -37,6 +37,8 @@
     <ClInclude Include="Monkey.h" />
     <ClInclude Include="Pacman.h" />
     <ClInclude Include="Player.h" />
+    <ClInclude Include="PowerUp.h" />
+    <ClInclude Include="PowerUpManager.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="StartingScene.h" />
     <ClInclude Include="Stats.h" />
@@ -68,6 +70,8 @@
     <ClCompile Include="Monkey.cpp" />
     <ClCompile Include="Pacman.cpp" />
     <ClCompile Include="Player.cpp" />
+    <ClCompile Include="PowerUp.cpp" />
+    <ClCompile Include="PowerUpManager.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="StartingScene.cpp" />
     <ClCompile Include="Stats.cpp" />

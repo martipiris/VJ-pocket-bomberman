@@ -1,8 +1,11 @@
 #include <iostream>
 #include <cmath>
 #include <GL/glew.h>
+#include <algorithm>
 #include "Player.h"
 #include "Game.h"
+#include "Stats.h"
+
 
 enum PlayerAnims {
 	STAND_LEFT, MOVE_LEFT, JUMP_LEFT, FALL_LEFT, 
@@ -76,7 +79,10 @@ void Player::init(const glm::ivec2 &tileMapPos, ShaderProgram &shaderProgram) {
 
 void Player::update(int deltaTime) {
 	sprite->update(deltaTime);
-	
+
+	if (invincibleTimer > 0)
+		invincibleTimer = std::max(0, invincibleTimer - deltaTime);
+
 	if (!isDead) {
 		updateMovement(deltaTime);
 	}
@@ -84,6 +90,7 @@ void Player::update(int deltaTime) {
 
 void Player::updateMovement(int deltaTime) {
 	const float dt = float(deltaTime) / 16.0f;
+	const float speed = horizSpeed * (1.0f + 0.1f * Stats::getInstance().getSpeedLevel());
 
 	if (Game::instance().getKey(GLFW_KEY_LEFT)) {
 		if (onGround) {
@@ -92,7 +99,7 @@ void Player::updateMovement(int deltaTime) {
 		else {
 			if (sprite->animation() != JUMP_LEFT && sprite->animation() != FALL_LEFT) sprite->changeAnimation(velY < 0 ? JUMP_LEFT : FALL_LEFT);
 		}
-		posPlayerF.x -= horizSpeed * dt;
+		posPlayerF.x -= speed * dt;
 	}
 	else if (Game::instance().getKey(GLFW_KEY_RIGHT)) {
 		if (onGround) {
@@ -101,7 +108,7 @@ void Player::updateMovement(int deltaTime) {
 		else {
 			if (sprite->animation() != JUMP_RIGHT && sprite->animation() != FALL_RIGHT) sprite->changeAnimation(velY < 0 ? JUMP_RIGHT : FALL_RIGHT);
 		}
-		posPlayerF.x += horizSpeed * dt;
+		posPlayerF.x += speed * dt;
 	}
 	else {
 		if (sprite->animation() == MOVE_LEFT) sprite->changeAnimation(STAND_LEFT);
@@ -192,8 +199,18 @@ void Player::updateMovement(int deltaTime) {
 	sprite->setPosition(glm::vec2(float(tileMapDispl.x + posPlayer.x), float(tileMapDispl.y + posPlayer.y)));
 }
 
-void Player::render(const glm::mat4 &view) {
-	if (sprite) sprite->render(view);
+void Player::render(const glm::mat4& view) {
+	if (!sprite) return;
+
+	// Blink: 100 ms visible, 100 ms hidden
+	if (invincibleTimer > 0 && !isDead && (invincibleTimer / 100) % 2 == 0)
+		return;
+
+	sprite->render(view);
+}
+
+void Player::setInvincible(int ms) {
+	invincibleTimer = ms;
 }
 
 void Player::setTileMap(TileMap *tileMap) {
@@ -215,4 +232,5 @@ void Player::setDead() {
 		sprite->changeAnimation(DIE);
 	}
 	isDead = true;
+	invincibleTimer = 0;   // the death animation must always be visible
 }

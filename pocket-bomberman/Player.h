@@ -24,6 +24,9 @@ public:
 	
 	glm::vec2 getPosition() const;
 
+	void setInvincible(int ms);
+	bool isInvincible() const { return invincibleTimer > 0; }
+
 	void setDead();
 private:
 	// Física
@@ -46,7 +49,7 @@ private:
 
 	// State
 	bool isDead = false;
-
+	int invincibleTimer = 0;
 	void updateMovement(int deltaTime);
 };
 

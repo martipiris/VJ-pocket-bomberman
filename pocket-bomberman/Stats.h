@@ -25,6 +25,10 @@ public:
 	void increaseBombRange();
 	void resetBombRange();
 
+	int getSpeedLevel();
+	void increaseSpeed();
+	void resetSpeed();
+
 	void resetAll();
 
 private:
@@ -33,7 +37,7 @@ private:
 	int lives;
 	int bombAmount;
 	int bombRange;
-
+	int speedLevel;
 	Stats();
 };
 
