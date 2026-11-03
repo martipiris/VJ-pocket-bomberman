@@ -3,6 +3,7 @@
 
 #include "LevelScene.h"
 #include "Monkey.h"
+#include "Pacman.h"
 #include <glm/glm.hpp>
 
 class Level2 : public LevelScene {
@@ -24,11 +25,13 @@ protected:
 	}
 
 private:
-	glm::ivec2 enemyCoords[4] = { glm::ivec2(1, 9),
-								  glm::ivec2(7, 7),
-								  glm::ivec2(7, 4),
-								  glm::ivec2(12, 13)
+	glm::ivec2 monkeyCoords[4] = { glm::ivec2(1, 26),
+								  glm::ivec2(7, 13),
+								  glm::ivec2(5, 4),
+								  glm::ivec2(4, 7)
 	};
+
+	glm::ivec2 pacmanCoords = glm::ivec2(13, 25);
 
 	void onLevelInit() override;
 	void onLevelUpdate(int deltaTime) override;

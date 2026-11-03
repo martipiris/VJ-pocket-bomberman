@@ -43,18 +43,27 @@ TileMap::TileMap(
 	}
 
 	prepareArrays(minCoords, program);
+	prepareBackground(minCoords, program);
 }
 
 TileMap::~TileMap()
 {
 	if(map != NULL)
 		delete [] map;
+	
+	backgroundQuad->free();
+	delete backgroundQuad;
+
 	free();
 }
 
 
 void TileMap::render() const
 {
+	// Renderizar fondo
+	backgroundQuad->render(backgroundTexture);
+	
+	// Renderizar tiles
 	glEnable(GL_TEXTURE_2D);
 	tilesheet.use();
 	glBindVertexArray(vao);
@@ -127,6 +136,17 @@ bool TileMap::loadLevel(const string& levelFile)
 		1.f / tilesheetSize.y
 	);
 
+	// Cargar textura de fondo
+	string backgroundFile = "images/level_background.png";
+	
+	if (!backgroundFile.empty()) {
+		backgroundTexture.loadFromFile(backgroundFile, TEXTURE_PIXEL_FORMAT_RGBA);
+		backgroundTexture.setWrapS(GL_REPEAT);
+		backgroundTexture.setWrapT(GL_REPEAT);
+		backgroundTexture.setMinFilter(GL_NEAREST);
+		backgroundTexture.setMagFilter(GL_NEAREST);
+	}
+
 	map = new int[mapSize.x * mapSize.y];
 
 	dynamicSolid.assign(mapSize.x * mapSize.y, 0);
@@ -146,7 +166,7 @@ bool TileMap::loadLevel(const string& levelFile)
 				: tile - int('0');
 		}
 
-		// Consumir el salto de línea.
+		// Consumir el salto de lÃ­nea.
 		fin.get(tile);
 
 #ifndef _WIN32
@@ -159,7 +179,28 @@ bool TileMap::loadLevel(const string& levelFile)
 	return true;
 }
 
-void TileMap::prepareArrays(const glm::vec2& minCoords, ShaderProgram& program)
+void TileMap::prepareBackground(const glm::vec2 &minCoords, ShaderProgram &program)
+{
+	glm::vec2 posPixel = glm::vec2(minCoords.x, minCoords.y);
+	glm::ivec2 mapPixelSize = getMapPixelSize();
+	
+	glm::vec2 geom[2] = {
+		glm::vec2(posPixel.x, posPixel.y),
+		glm::vec2(posPixel.x + mapPixelSize.x, posPixel.y + mapPixelSize.y)
+	};
+	
+	float repeatX = float(mapPixelSize.x) / tileSize;
+	float repeatY = float(mapPixelSize.y) / tileSize;
+	
+	glm::vec2 texCoords[2] = {
+		glm::vec2(0.0f, 0.0f),
+		glm::vec2(repeatX, repeatY)
+	};
+	
+	backgroundQuad = TexturedQuad::createTexturedQuad(geom, texCoords, program);
+}
+
+void TileMap::prepareArrays(const glm::vec2 &minCoords, ShaderProgram &program)
 {
 	origin = minCoords;
 

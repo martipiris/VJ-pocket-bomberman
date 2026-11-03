@@ -5,6 +5,7 @@
 #include <glm/glm.hpp>
 #include "Texture.h"
 #include "ShaderProgram.h"
+#include "TexturedQuad.h"
 #include <vector>
 
 
@@ -52,6 +53,7 @@ public:
 private:
 	bool loadLevel(const string &levelFile);
 	void prepareArrays(const glm::vec2 &minCoords, ShaderProgram &program);
+	void prepareBackground(const glm::vec2 &minCoords, ShaderProgram &program);
 
 private:
 	GLuint vao;
@@ -61,11 +63,13 @@ private:
 	glm::ivec2 position, mapSize, tilesheetSize;
 	int tileSize, blockSize;
 	Texture tilesheet;
+	Texture backgroundTexture;
 	glm::vec2 tileTexSize;
 	int *map;
 
 	bool solidAt(int x, int y) const;
 	std::vector<char> dynamicSolid;
+	TexturedQuad* backgroundQuad;
 
 	void uploadVertices();
 	glm::vec2 origin;

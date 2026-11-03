@@ -9,10 +9,10 @@ public:
 	~Monkey();
 
 	void init() override;
+
 	void updateMovement() override;
 private:
-	int state;
-	int timer;
+	
 };
 
 #endif // MONKEY_INCLUDE

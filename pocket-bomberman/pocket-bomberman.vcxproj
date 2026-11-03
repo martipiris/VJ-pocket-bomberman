@@ -35,6 +35,7 @@
     <ClInclude Include="libs\TexturedQuad.h" />
     <ClInclude Include="libs\TileMap.h" />
     <ClInclude Include="Monkey.h" />
+    <ClInclude Include="Pacman.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="PowerUp.h" />
     <ClInclude Include="PowerUpManager.h" />
@@ -67,6 +68,7 @@
     <ClCompile Include="libs\TileMap.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Monkey.cpp" />
+    <ClCompile Include="Pacman.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="PowerUp.cpp" />
     <ClCompile Include="PowerUpManager.cpp" />
