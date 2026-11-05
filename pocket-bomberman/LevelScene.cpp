@@ -85,7 +85,7 @@ void LevelScene::updateObjects(int deltaTime, int currentTime)
 	// Explosion kills enemies
 	enemies.erase(std::remove_if(enemies.begin(), enemies.end(),
 		[&](const std::unique_ptr<Enemy>& e) {
-			return bombs->hits(glm::ivec2(e->getPosition()) + ENEMY_COLLISION_OFFSET, SIZE_ENEMY_COLLISION);
+			return bombs->hits(glm::ivec2(e->getPosition()) + e->getCollisionOffset(), e->getCollisionSize());
 		}), enemies.end());
 
 	cam->setTarget(player->getPosition());
@@ -140,11 +140,13 @@ glm::vec2 LevelScene::getInitialPlayerTilePos() const {
 }
 
 bool LevelScene::enemyPlayerCollision() const {
+	const glm::ivec2 playerBox = glm::ivec2(player->getPosition()) + PLAYER_COLLISION_OFFSET;
 	for (const auto& enemy : enemies) {
-		const glm::vec2 enemyPos = enemy->getPosition();
-		const glm::vec2 playerPos = player->getPosition();
-		if (std::abs(enemyPos.x - playerPos.x) < SIZE_ENEMY_COLLISION.x &&
-			std::abs(enemyPos.y - playerPos.y) < SIZE_ENEMY_COLLISION.y) {
+		const glm::ivec2 enemyBox = glm::ivec2(enemy->getPosition()) + enemy->getCollisionOffset();
+		if (playerBox.x < enemyBox.x + enemy->getCollisionSize().x &&
+			playerBox.x + SIZE_PLAYER_COLLISION.x > enemyBox.x &&
+			playerBox.y < enemyBox.y + enemy->getCollisionSize().y &&
+			playerBox.y + SIZE_PLAYER_COLLISION.y > enemyBox.y) {
 			return true;
 		}
 	}

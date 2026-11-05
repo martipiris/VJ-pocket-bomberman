@@ -3,6 +3,7 @@
 
 #include "LevelScene.h"
 #include "Monkey.h"
+#include "Tree.h"
 #include <glm/glm.hpp>
 
 class Level5 : public LevelScene {
@@ -24,6 +25,8 @@ protected:
 	}
 
 private:
+	glm::ivec2 bossCoords = glm::ivec2(7, 4);
+
 	void onLevelInit() override;
 	void onLevelUpdate(int deltaTime) override;
 	void onLevelRender() override;

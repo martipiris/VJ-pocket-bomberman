@@ -40,6 +40,7 @@
     <ClInclude Include="Scene.h" />
     <ClInclude Include="StartingScene.h" />
     <ClInclude Include="Stats.h" />
+    <ClInclude Include="Tree.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Bomb.cpp" />
@@ -71,6 +72,7 @@
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="StartingScene.cpp" />
     <ClCompile Include="Stats.cpp" />
+    <ClCompile Include="Tree.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{A5C82172-5379-49C6-871B-74E31A722017}</ProjectGuid>

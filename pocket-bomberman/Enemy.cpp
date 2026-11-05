@@ -12,30 +12,33 @@ void Enemy::init(const glm::ivec2& tileMapPos, TileMap* tileMap, Player* player,
 	this->player = player;
 	texProgram = shaderProgram;
 	
+	posEnemy = tileMapPos;
 	init();
-	setPosition(tileMapPos);
+	sprite->setPosition(posEnemy);
 }
 
 void Enemy::update(int deltaTime) {
 	sprite->update(deltaTime);
 
 	updateMovement();
-	sprite->setPosition(glm::ivec2(posEnemy.x, posEnemy.y));
+	sprite->setPosition(posEnemy);
 }
 
 void Enemy::render(const glm::mat4& view) {
 	if (sprite) sprite->render(view);
 }
 
-void Enemy::setPosition(const glm::vec2& pos) {
-	posEnemy = pos;
-	sprite->setPosition(posEnemy);
-}
-
 glm::vec2 Enemy::getPosition() const {
 	return glm::ivec2(posEnemy.x, posEnemy.y);
 }
 
+glm::ivec2 Enemy::getCollisionSize() const {
+	return enemyCollision;
+}
+
+glm::ivec2 Enemy::getCollisionOffset() const {
+	return enemyCollisionOffset;
+}
 
 
 
