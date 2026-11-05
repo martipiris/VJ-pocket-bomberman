@@ -8,6 +8,9 @@
 
 namespace {
 	const int DESTRUCTIBLE_TILES[] = { 4 }; 
+	const int DOOR_CLOSED_TILE = 8;  
+	const int DOOR_OPEN_TILE = 16;   
+	const int DOOR_MARGIN = 16;       
 }
 
 
@@ -35,6 +38,8 @@ TileMap::TileMap(
 	, blockSize(0)
 	, map(nullptr)
 	, origin(0, 0)
+	, doorTile(-1, -1)
+	, doorOpen(false)
 {
 	if (!loadLevel(levelFile))
 	{
@@ -173,6 +178,10 @@ bool TileMap::loadLevel(const string& levelFile)
 		fin.get(tile);
 #endif
 	}
+	for (int j = 0; j < mapSize.y; ++j)
+		for (int i = 0; i < mapSize.x; ++i)
+			if (map[j * mapSize.x + i] == DOOR_CLOSED_TILE)
+				doorTile = glm::ivec2(i, j);
 
 	fin.close();
 
@@ -385,5 +394,24 @@ bool TileMap::solidAt(int x, int y) const
 {
 	if (x < 0 || x >= mapSize.x || y < 0 || y >= mapSize.y)
 		return false;
-	return map[y * mapSize.x + x] != 0 || dynamicSolid[y * mapSize.x + x] != 0;
+	const int id = map[y * mapSize.x + x];
+	return (id != 0 && id != DOOR_OPEN_TILE) || dynamicSolid[y * mapSize.x + x] != 0;
+}
+
+void TileMap::openDoor()
+{
+	if (!hasDoor() || doorOpen) return;
+	map[doorTile.y * mapSize.x + doorTile.x] = DOOR_OPEN_TILE;
+	doorOpen = true;
+	uploadVertices();   // redraws the tile with the open-door art
+}
+
+bool TileMap::touchesOpenDoor(const glm::ivec2& boxPos, const glm::ivec2& boxSize) const
+{
+	if (!doorOpen) return false;
+
+	const glm::ivec2 p = tile2Pixel(doorTile) + glm::ivec2(DOOR_MARGIN);
+	const int s = tileSize - 2 * DOOR_MARGIN;
+	return boxPos.x < p.x + s && boxPos.x + boxSize.x > p.x &&
+		boxPos.y < p.y + s && boxPos.y + boxSize.y > p.y;
 }

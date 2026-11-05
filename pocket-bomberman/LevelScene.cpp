@@ -91,10 +91,7 @@ void LevelScene::updateObjects(int deltaTime, int currentTime)
 			case POWERUP_FIRE:  stats.increaseBombRange();  break;
 			case POWERUP_SPEED: stats.increaseSpeed();      break;
 			case POWERUP_STAR:  player->setInvincible(10000); break;   // 10 s
-			case POWERUP_HEART:
-				std::cout << "Heart picked up" << std::endl;
-				stats.setHeart(true);
-				break;
+			case POWERUP_HEART: stats.setHeart(true); break;
 			default: break;
 			}
 		}
@@ -110,6 +107,18 @@ void LevelScene::updateObjects(int deltaTime, int currentTime)
 		[&](const std::unique_ptr<Enemy>& e) {
 			return bombs->hits(glm::ivec2(e->getPosition()) + ENEMY_COLLISION_OFFSET, SIZE_ENEMY_COLLISION);
 		}), enemies.end());
+
+	// All enemies dead -> open the door
+	if (!isGameOver && !doorOpened && enemies.empty()) {
+		map->openDoor();
+		doorOpened = true;
+	}
+
+	// Touching the open door -> next level
+	if (!isGameOver && map->touchesOpenDoor(boxPos, SIZE_PLAYER_COLLISION)) {
+		Game::instance().changeScene(nextLevelId());
+		return;   // the scene was just deleted, don't touch members after this
+	}
 
 	cam->setTarget(player->getPosition());
 	cam->update();
@@ -177,9 +186,6 @@ bool LevelScene::enemyPlayerCollision() const {
 }
 void LevelScene::hurtPlayer()
 {
-	std::cout << "hurtPlayer: heart=" << Stats::getInstance().hasHeart()
-		<< " invincible=" << player->isInvincible()
-		<< " gameOver=" << isGameOver << std::endl;
 
 	if (isGameOver || player->isInvincible()) return;
 

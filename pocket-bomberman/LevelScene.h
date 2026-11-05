@@ -45,6 +45,7 @@ protected:
 	virtual void onLevelInit() {}
 	virtual void onLevelUpdate(int deltaTime) {}
 	virtual void onLevelRender() {}
+	virtual int nextLevelId() const = 0;
 
 	TileMap *map = nullptr;
 	Player *player = nullptr;
@@ -68,6 +69,9 @@ protected:
 private:
 	std::string m_levelFile;
 	bool isGameOver = false;
+	bool doorOpened = false;
+
+
 	int gameOverTimer = 120;
 
 	bool enemyPlayerCollision() const;
