@@ -1,6 +1,7 @@
 #include "GUI.h"
 #include <GL/glew.h>
 #include <glm/gtc/matrix_transform.hpp>
+#include "Stats.h"
 
 void GUI::init() {
 	background = Quad::createQuad(0, SCREEN_HEIGHT - GUI_HEIGHT, SCREEN_WIDTH, GUI_HEIGHT, program);
@@ -21,6 +22,13 @@ void GUI::init() {
 
 		stats[i]->x_coord = x_coords[i];
 	}
+	// Extra-life heart
+	glm::vec2 heartGeom[2] = {
+		glm::vec2(x_coords[1] - GUI_HEIGHT, SCREEN_HEIGHT - GUI_HEIGHT),
+		glm::vec2(x_coords[1],              SCREEN_HEIGHT)
+	};
+	glm::vec2 heartTex[2] = { glm::vec2(0.25f, 0.5f), glm::vec2(0.5f, 1.0f) };  
+	heartIcon = TexturedQuad::createTexturedQuad(heartGeom, heartTex, texProgram);
 }
 
 void GUI::render() {
@@ -47,6 +55,9 @@ void GUI::render() {
 		stats[i]->icon->render(texs);
 		stats[i]->text->render(statTexts[i], glm::vec2(stats[i]->x_coord + GUI_HEIGHT + 7, SCREEN_HEIGHT + 6), 45, glm::vec4(0, 0, 0, 1));
 	}
+
+	if (Stats::getInstance().hasHeart())
+		heartIcon->render(texs);
 
 	glEnable(GL_DEPTH_TEST);
 }
@@ -80,4 +91,5 @@ GUI::~GUI() {
 		delete stats[i]->text;
 		delete stats[i];
 	}
+	delete heartIcon;
 }

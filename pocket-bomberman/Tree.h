@@ -32,10 +32,10 @@ private:
     int hitsRemaining;
 	int hitFlashTimer;
 	int deathTimer;
- int petalSpawnTimer;
+	int petalSpawnTimer;
 	bool dying;
 	std::vector<std::unique_ptr<Pollen>> pollen;
- std::vector<std::unique_ptr<Pollen>> petals;
+	std::vector<std::unique_ptr<Pollen>> petals;
 	std::vector<std::unique_ptr<LeafEnemy>> leaves;
 
 	void startPollenRound();

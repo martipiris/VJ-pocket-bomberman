@@ -47,6 +47,7 @@
     <ClInclude Include="ScreenWipe.h" />
     <ClInclude Include="StartingScene.h" />
     <ClInclude Include="Stats.h" />
+    <ClInclude Include="TextPageScene.h" />
     <ClInclude Include="Tree.h" />
   </ItemGroup>
   <ItemGroup>
@@ -54,10 +55,8 @@
     <ClCompile Include="Bomb.cpp" />
     <ClCompile Include="BombManager.cpp" />
     <ClCompile Include="Camera.cpp" />
-    <ClCompile Include="CreditsScene.cpp" />
     <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="GUI.cpp" />
-    <ClCompile Include="InstructionsScene.cpp" />
     <ClCompile Include="LeafEnemy.cpp" />
     <ClCompile Include="Level1.cpp" />
     <ClCompile Include="Level2.cpp" />
@@ -85,6 +84,7 @@
     <ClCompile Include="ScreenWipe.cpp" />
     <ClCompile Include="StartingScene.cpp" />
     <ClCompile Include="Stats.cpp" />
+    <ClCompile Include="TextPageScene.cpp" />
     <ClCompile Include="Tree.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

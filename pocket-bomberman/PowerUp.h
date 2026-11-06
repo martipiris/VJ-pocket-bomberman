@@ -6,6 +6,7 @@
 #include "libs/Sprite.h"
 #include "libs/TileMap.h"
 
+//All different powerups directly tied to their positions in the spritesheet
 enum PowerUpType {
 	POWERUP_BOMB,    
 	POWERUP_FIRE,    
@@ -26,7 +27,7 @@ public:
 
 private:
 	PowerUpType type;
-	glm::ivec2 pos;     // top-left pixel of the tile
+	glm::ivec2 pos;   
 	int size;
 	std::unique_ptr<Sprite> sprite;
 };

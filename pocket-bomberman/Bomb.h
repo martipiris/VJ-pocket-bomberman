@@ -9,6 +9,7 @@
 
 #define SIZE_BOMB glm::ivec2(64, 64)
 
+ //Different parts of a bomb explosion to be rendered individually and pieced together
 enum BlastPart { CENTER, ARM_H, ARM_V, CAP_RIGHT, CAP_LEFT, CAP_DOWN, CAP_UP };
 
 struct BlastTile {
@@ -23,14 +24,10 @@ public:
 	Bomb(const glm::ivec2& tile, int range, TileMap* map, Texture* tex, ShaderProgram& program);
 	~Bomb();
 
-	// Returns true on the frame the fuse runs out (the manager then calls detonate)
-	bool update(int deltaTime);
+	bool update(int deltaTime); // Returns true on the frame the fuse runs out 
 	void detonate(const std::vector<BlastTile>& tiles);
 	void render(const glm::mat4& view);
-
 	void updateSolidity(const glm::ivec2& boxPos, const glm::ivec2& boxSize);
-
-	// True if the box overlaps any active blast tile
 	bool hits(const glm::ivec2& boxPos, const glm::ivec2& boxSize) const;
 
 	glm::ivec2 getTile() const { return tile; }

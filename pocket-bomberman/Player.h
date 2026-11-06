@@ -30,25 +30,25 @@ public:
 
 	void setDead(bool exploded);
 private:
-	// Física
+	// Physics
 	glm::vec2 posPlayerF;    
 	glm::ivec2 tileMapDispl; 
 	glm::ivec2 posPlayer;    
 	float velY;              
 	bool  onGround;
 
-	// parámetros
+	// Player movement parameters
 	const float gravity = 0.6f;       
 	const float jumpSpeed =  16.0f;  
 	const float maxFallSpeed = 18.0f;
 	const float horizSpeed = 6.0f;
 
-	// Render/anim
+	// Animations and rendering
 	Texture spritesheet;
 	Sprite *sprite;
 	TileMap *map;
 
-	// State
+	// Player states variables
 	bool isDead = false;
     bool isWinning = false;
 	int invincibleTimer = 0;

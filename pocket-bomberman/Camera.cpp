@@ -7,6 +7,7 @@ Camera::Camera(int viewportWidth, int viewportHeight, const glm::ivec2& worldPix
 {
 }
 
+ //Updates the camera position to follow the target without exiting the screen bounds
 void Camera::update() {
     float halfW = m_viewport.x * 0.5f;
     float halfH = m_viewport.y * 0.5f;

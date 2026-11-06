@@ -81,6 +81,7 @@ glm::ivec2 LeafEnemy::getCollisionOffset() const {
     return glm::ivec2(0, 0);
 }
 
+ //Check to hurt the player if it touches the enemy while it is not in the act of exploding
 bool LeafEnemy::hitsPlayer() const {
    if (isExploding())
         return false;

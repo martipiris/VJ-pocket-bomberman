@@ -21,13 +21,13 @@ public:
 	int available() const { return maximum() - int(bombs.size()); }
 	int maximum() const { return Stats::getInstance().getBombAmount(); }
 
-	std::vector<glm::ivec2> takeDestroyedTiles();   // returns and clears the list
+	std::vector<glm::ivec2> takeDestroyedTiles(); 
 
 private:
 	TileMap* map;
 	ShaderProgram& program;
-	Texture texture;               // shared by every bomb
-	std::vector<std::unique_ptr<Bomb>> bombs;
+	Texture texture;               // Shared by every bomb
+	std::vector<std::unique_ptr<Bomb>> bombs; //All the bombs currently placed
 	std::vector<BlastTile> computeBlast(const Bomb& src) const;
 	bool blocked(const glm::ivec2& tile, const Bomb* self) const;
 	std::vector<glm::ivec2> destroyedTiles;

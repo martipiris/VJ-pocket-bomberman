@@ -109,7 +109,7 @@ void Player::update(int deltaTime) {
 
 void Player::updateMovement(int deltaTime) {
 	const float dt = float(deltaTime) / 16.0f;
-	const float speed = horizSpeed * (1.0f + 0.1f * Stats::getInstance().getSpeedLevel());
+	const float speed = horizSpeed * (1.0f + 0.1f * Stats::getInstance().getSpeedLevel()); //Speed can change with speed powerup
 
 	if (Game::instance().getKey(GLFW_KEY_LEFT)) {
 		if (onGround) {
@@ -223,7 +223,7 @@ void Player::updateMovement(int deltaTime) {
 void Player::render(const glm::mat4& view) {
 	if (!sprite ||(isDead && deadTimer < 0)) return;
 
-	// Blink: 100 ms visible, 100 ms hidden
+	// While invincible blink: 100 ms visible, 100 ms hidden
 	if (invincibleTimer > 0 && !isDead && (invincibleTimer / 100) % 2 == 0)
 		return;
 

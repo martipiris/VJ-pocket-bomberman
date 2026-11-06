@@ -84,9 +84,10 @@ private:
 	bool enemyPlayerCollision() const;
 	void hurtPlayer(bool exploded);
 
+    //All diferent states the level scene can be, boils down to either mid transition or not
 	enum Phase { INTRO_HOLD, INTRO_REVEAL, PLAYING, OUTRO_WIPE, OUTRO_HOLD };
 	Phase phase = INTRO_HOLD;
-	int phaseTimer = 0;       // ms spent in the current phase
+	int phaseTimer = 0;      
 	int playStartTime = 0;    // Scene::currentTime when gameplay began
 
 	ScreenWipe* wipe = nullptr;

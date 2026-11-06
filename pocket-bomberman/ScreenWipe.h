@@ -5,7 +5,7 @@
 #include "libs/ShaderProgram.h"
 
 // Draws a pie slice over the whole screen. Angles are fractions of a turn,
-// measured clockwise from 12 o'clock (0 = top, 0.25 = right, 0.5 = bottom).
+// Measured clockwise from 12 o'clock (0 = top, 0.25 = right, 0.5 = bottom).
 class ScreenWipe {
 public:
 	explicit ScreenWipe(ShaderProgram& program);
