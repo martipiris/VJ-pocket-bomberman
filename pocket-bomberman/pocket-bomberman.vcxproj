@@ -40,6 +40,7 @@
     <ClInclude Include="PowerUp.h" />
     <ClInclude Include="PowerUpManager.h" />
     <ClInclude Include="Scene.h" />
+    <ClInclude Include="ScreenWipe.h" />
     <ClInclude Include="StartingScene.h" />
     <ClInclude Include="Stats.h" />
   </ItemGroup>
@@ -73,6 +74,7 @@
     <ClCompile Include="PowerUp.cpp" />
     <ClCompile Include="PowerUpManager.cpp" />
     <ClCompile Include="Scene.cpp" />
+    <ClCompile Include="ScreenWipe.cpp" />
     <ClCompile Include="StartingScene.cpp" />
     <ClCompile Include="Stats.cpp" />
   </ItemGroup>

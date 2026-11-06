@@ -71,7 +71,7 @@ void Player::init(const glm::ivec2 &tileMapPos, ShaderProgram &shaderProgram) {
 	sprite->addKeyframe(DIE, glm::vec2(0.f, 0.4f));
 	sprite->addKeyframe(DIE, glm::vec2(0.2f, 0.4f));
 
-	sprite->changeAnimation(1);
+	sprite->changeAnimation(STAND_RIGHT);
 	tileMapDispl = tileMapPos;
 	// posPlayerF se ajusta desde setPosition() que llama LevelScene después de init
 	sprite->setPosition(glm::vec2(float(tileMapDispl.x + posPlayer.x), float(tileMapDispl.y + posPlayer.y)));

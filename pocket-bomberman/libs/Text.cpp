@@ -82,6 +82,18 @@ int Text::getSize() const
 	return fontSize;
 }
 
+float Text::getWidth(const string& str, int size) const
+{
+	float width = 0.f;
+	for (unsigned int i = 0; i < str.length(); i++)
+	{
+		const int idx = str[i] - 32;
+		if (idx < 0 || idx >= NUM_CHARACTERS) continue;   // same range the atlas covers
+		width += (float(size) / fontSize) * chars[idx].ax;
+	}
+	return width;
+}
+
 void Text::render(char c, const glm::vec2 &pixel, int size, const glm::vec4 &color)
 {
 	int vp[4];

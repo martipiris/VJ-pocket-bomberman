@@ -16,6 +16,7 @@
 #include "BombManager.h"
 #include "PowerUpManager.h"
 #include "Stats.h"
+#include "ScreenWipe.h"
 
 #define SCREEN_OFFSET_X 0
 #define SCREEN_OFFSET_Y 0
@@ -47,6 +48,8 @@ protected:
 	virtual void onLevelRender() {}
 	virtual int nextLevelId() const = 0;
 
+	virtual std::string introTitle() const { return "STAGE"; }
+
 	TileMap *map = nullptr;
 	Player *player = nullptr;
 	GUI *gui = nullptr;
@@ -76,6 +79,18 @@ private:
 
 	bool enemyPlayerCollision() const;
 	void hurtPlayer();
+
+	enum Phase { INTRO_HOLD, INTRO_REVEAL, PLAYING, OUTRO_WIPE, OUTRO_HOLD };
+	Phase phase = INTRO_HOLD;
+	int phaseTimer = 0;       // ms spent in the current phase
+	int playStartTime = 0;    // Scene::currentTime when gameplay began
+
+	ScreenWipe *wipe = nullptr;
+	Text *introText = nullptr;
+
+	void updateTransition(int deltaTime, int currentTime);
+	void renderTransition();
+	glm::vec2 introTextPos() const;
 };
 
 
