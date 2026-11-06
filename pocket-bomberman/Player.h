@@ -23,7 +23,9 @@ public:
 	void setPosition(const glm::vec2 &pos);
 	
 	glm::vec2 getPosition() const;
-	bool isGodMode() const;
+
+	void setInvincible(int ms);
+	bool isInvincible() const { return invincibleTimer > 0; }
 
 	void setDead();
 private:
@@ -47,8 +49,7 @@ private:
 
 	// State
 	bool isDead = false;
-	bool godMode = false;
-
+	int invincibleTimer = 0;
 	void updateMovement(int deltaTime);
 };
 

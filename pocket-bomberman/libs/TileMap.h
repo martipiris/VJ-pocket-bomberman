@@ -47,6 +47,13 @@ public:
 
 	void setDynamicSolid(const glm::ivec2& tile, bool solid);
 
+	bool isDestructible(const glm::ivec2& tile) const;  
+	bool destroyTile(const glm::ivec2& tile);      
+
+	bool hasDoor() const { return doorTile.x >= 0; }
+	void openDoor();
+	bool touchesOpenDoor(const glm::ivec2& boxPos, const glm::ivec2& boxSize) const;
+
 private:
 	bool loadLevel(const string &levelFile);
 	void prepareArrays(const glm::vec2 &minCoords, ShaderProgram &program);
@@ -63,9 +70,16 @@ private:
 	Texture backgroundTexture;
 	glm::vec2 tileTexSize;
 	int *map;
+
 	bool solidAt(int x, int y) const;
 	std::vector<char> dynamicSolid;
 	TexturedQuad* backgroundQuad;
+
+	void uploadVertices();
+	glm::vec2 origin;
+
+	glm::ivec2 doorTile;
+	bool doorOpen;
 
 };
 

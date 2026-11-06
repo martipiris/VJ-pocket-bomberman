@@ -6,7 +6,12 @@
 #include "TileMap.h"
 
 
-using namespace std;
+namespace {
+	const int DESTRUCTIBLE_TILES[] = { 4 }; 
+	const int DOOR_CLOSED_TILE = 8;  
+	const int DOOR_OPEN_TILE = 16;   
+	const int DOOR_MARGIN = 16;       
+}
 
 
 TileMap *TileMap::createTileMap(const string &levelFile, const glm::vec2 &minCoords, ShaderProgram &program)
@@ -32,6 +37,9 @@ TileMap::TileMap(
 	, tileSize(0)
 	, blockSize(0)
 	, map(nullptr)
+	, origin(0, 0)
+	, doorTile(-1, -1)
+	, doorOpen(false)
 {
 	if (!loadLevel(levelFile))
 	{
@@ -163,13 +171,17 @@ bool TileMap::loadLevel(const string& levelFile)
 				: tile - int('0');
 		}
 
-		// Consumir el salto de línea.
+		// Consumir el salto de lÃ­nea.
 		fin.get(tile);
 
 #ifndef _WIN32
 		fin.get(tile);
 #endif
 	}
+	for (int j = 0; j < mapSize.y; ++j)
+		for (int i = 0; i < mapSize.x; ++i)
+			if (map[j * mapSize.x + i] == DOOR_CLOSED_TILE)
+				doorTile = glm::ivec2(i, j);
 
 	fin.close();
 
@@ -199,54 +211,71 @@ void TileMap::prepareBackground(const glm::vec2 &minCoords, ShaderProgram &progr
 
 void TileMap::prepareArrays(const glm::vec2 &minCoords, ShaderProgram &program)
 {
-	int tile;
-	glm::vec2 posTile, texCoordTile[2], halfTexel;
-	vector<float> vertices;
-	
-	nTiles = 0;
-	halfTexel = glm::vec2(0,0);// glm::vec2(0.5f / tilesheet.width(), 0.5f / tilesheet.height());
-	for(int j=0; j<mapSize.y; j++)
-	{
-		for(int i=0; i<mapSize.x; i++)
-		{
-			tile = map[j * mapSize.x + i];
-			if(tile != 0)
-			{
-				// Non-empty tile
-				nTiles++;
-				posTile = glm::vec2(minCoords.x + i * tileSize, minCoords.y + j * tileSize);
-				texCoordTile[0] = glm::vec2(float((tile-1)%tilesheetSize.x) / tilesheetSize.x, float((tile-1)/tilesheetSize.x) / tilesheetSize.y);
-				texCoordTile[1] = texCoordTile[0] + tileTexSize;
-				//texCoordTile[0] += halfTexel;
-				texCoordTile[1] -= halfTexel;
-				// First triangle
-				vertices.push_back(posTile.x); vertices.push_back(posTile.y);
-				vertices.push_back(texCoordTile[0].x); vertices.push_back(texCoordTile[0].y);
-				vertices.push_back(posTile.x + blockSize); vertices.push_back(posTile.y);
-				vertices.push_back(texCoordTile[1].x); vertices.push_back(texCoordTile[0].y);
-				vertices.push_back(posTile.x + blockSize); vertices.push_back(posTile.y + blockSize);
-				vertices.push_back(texCoordTile[1].x); vertices.push_back(texCoordTile[1].y);
-				// Second triangle
-				vertices.push_back(posTile.x); vertices.push_back(posTile.y);
-				vertices.push_back(texCoordTile[0].x); vertices.push_back(texCoordTile[0].y);
-				vertices.push_back(posTile.x + blockSize); vertices.push_back(posTile.y + blockSize);
-				vertices.push_back(texCoordTile[1].x); vertices.push_back(texCoordTile[1].y);
-				vertices.push_back(posTile.x); vertices.push_back(posTile.y + blockSize);
-				vertices.push_back(texCoordTile[0].x); vertices.push_back(texCoordTile[1].y);
-			}
-		}
-	}
+	origin = minCoords;
 
 	glGenVertexArrays(1, &vao);
 	glBindVertexArray(vao);
 	glGenBuffers(1, &vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	glBufferData(GL_ARRAY_BUFFER, 24 * nTiles * sizeof(float), &vertices[0], GL_STATIC_DRAW);
-	
-	posLocation = program.bindVertexAttribute("position", 2, 4*sizeof(float), 0);
-	texCoordLocation = program.bindVertexAttribute("texCoord", 2, 4*sizeof(float), (void *)(2*sizeof(float)));	
+	uploadVertices();
+
+	posLocation = program.bindVertexAttribute("position", 2, 4 * sizeof(float), 0);
+	texCoordLocation = program.bindVertexAttribute("texCoord", 2, 4 * sizeof(float), (void*)(2 * sizeof(float)));
 }
 
+void TileMap::uploadVertices()
+{
+	std::vector<float> vertices;
+	const float b = float(blockSize);
+	nTiles = 0;
+
+	for (int j = 0; j < mapSize.y; j++)
+	{
+		for (int i = 0; i < mapSize.x; i++)
+		{
+			const int tile = map[j * mapSize.x + i];
+			if (tile == 0) continue;
+
+			++nTiles;
+			const glm::vec2 p(origin.x + i * tileSize, origin.y + j * tileSize);
+			const glm::vec2 t0(float((tile - 1) % tilesheetSize.x) / tilesheetSize.x,
+				float((tile - 1) / tilesheetSize.x) / tilesheetSize.y);
+			const glm::vec2 t1 = t0 + tileTexSize;
+
+			const float quad[24] = {
+				p.x,     p.y,     t0.x, t0.y,
+				p.x + b, p.y,     t1.x, t0.y,
+				p.x + b, p.y + b, t1.x, t1.y,
+				p.x,     p.y,     t0.x, t0.y,
+				p.x + b, p.y + b, t1.x, t1.y,
+				p.x,     p.y + b, t0.x, t1.y };
+			vertices.insert(vertices.end(), quad, quad + 24);
+		}
+	}
+
+	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), vertices.data(), GL_STATIC_DRAW);
+}
+
+bool TileMap::isDestructible(const glm::ivec2& tile) const
+{
+	if (tile.x < 0 || tile.x >= mapSize.x || tile.y < 0 || tile.y >= mapSize.y)
+		return false;
+
+	const int id = map[tile.y * mapSize.x + tile.x];
+	for (int d : DESTRUCTIBLE_TILES)
+		if (id == d) return true;
+	return false;
+}
+
+bool TileMap::destroyTile(const glm::ivec2& tile)
+{
+	if (!isDestructible(tile)) return false;
+
+	map[tile.y * mapSize.x + tile.x] = 0;   // collisions read this array, so the tile is now walkable
+	uploadVertices();                       // re-upload into the same VBO; the VAO keeps working
+	return true;
+}
 // Collision tests for axis aligned bounding boxes.
 // Method collisionMoveDown also corrects Y coordinate if the box is
 // already intersecting a tile below.
@@ -365,5 +394,24 @@ bool TileMap::solidAt(int x, int y) const
 {
 	if (x < 0 || x >= mapSize.x || y < 0 || y >= mapSize.y)
 		return false;
-	return map[y * mapSize.x + x] != 0 || dynamicSolid[y * mapSize.x + x] != 0;
+	const int id = map[y * mapSize.x + x];
+	return (id != 0 && id != DOOR_OPEN_TILE) || dynamicSolid[y * mapSize.x + x] != 0;
+}
+
+void TileMap::openDoor()
+{
+	if (!hasDoor() || doorOpen) return;
+	map[doorTile.y * mapSize.x + doorTile.x] = DOOR_OPEN_TILE;
+	doorOpen = true;
+	uploadVertices();   // redraws the tile with the open-door art
+}
+
+bool TileMap::touchesOpenDoor(const glm::ivec2& boxPos, const glm::ivec2& boxSize) const
+{
+	if (!doorOpen) return false;
+
+	const glm::ivec2 p = tile2Pixel(doorTile) + glm::ivec2(DOOR_MARGIN);
+	const int s = tileSize - 2 * DOOR_MARGIN;
+	return boxPos.x < p.x + s && boxPos.x + boxSize.x > p.x &&
+		boxPos.y < p.y + s && boxPos.y + boxSize.y > p.y;
 }

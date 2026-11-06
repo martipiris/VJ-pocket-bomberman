@@ -2,8 +2,8 @@
 #include <iostream>
 #include "BombManager.h"
 
-BombManager::BombManager(TileMap* map, ShaderProgram& program, int maxBombs, int range)
-	: map(map), program(program), maxBombs(maxBombs), range(range)
+BombManager::BombManager(TileMap* map, ShaderProgram& program)
+	: map(map), program(program)
 {
 	if (!texture.loadFromFile("images/bomb.png", TEXTURE_PIXEL_FORMAT_RGBA))
 		std::cerr << "Could not load images/bomb.png" << std::endl;
@@ -11,11 +11,12 @@ BombManager::BombManager(TileMap* map, ShaderProgram& program, int maxBombs, int
 
 bool BombManager::tryPlace(const glm::ivec2& tile)
 {
-	if (int(bombs.size()) >= maxBombs) return false;
+	if (int(bombs.size()) >= maximum()) return false;
 	for (const auto& b : bombs)
 		if (b->getTile() == tile) return false;
 	if (map->isTileSolid(map->tile2Pixel(tile))) return false;
 
+	const int range = Stats::getInstance().getBombRange();   // each bomb keeps the range it had when placed
 	bombs.push_back(std::make_unique<Bomb>(tile, range, map, &texture, program));
 	return true;
 }
@@ -26,8 +27,14 @@ void BombManager::update(int deltaTime, const glm::ivec2& boxPos, const glm::ive
 		tryPlace(map->pixel2Tile(feet));
 
 	for (auto& b : bombs) {
-		if (b->update(deltaTime))
-			b->detonate(computeBlast(*b));
+		if (b->update(deltaTime)) {
+			std::vector<BlastTile> blast = computeBlast(*b);
+			b->detonate(blast);
+
+			for (const BlastTile& bt : blast)
+				if (map->destroyTile(bt.pos))        
+					destroyedTiles.push_back(bt.pos);
+		}
 		b->updateSolidity(boxPos, boxSize);
 	}
 	bombs.erase(std::remove_if(bombs.begin(), bombs.end(),
@@ -67,6 +74,11 @@ std::vector<BlastTile> BombManager::computeBlast(const Bomb& src) const
 		std::vector<glm::ivec2> ray;
 		for (int i = 1; i <= src.getRange(); ++i) {
 			glm::ivec2 t = src.getTile() + dir.d * i;
+
+			if (map->isDestructible(t)) {      // reaches the breakable tile, destroys it, stops
+				ray.push_back(t);
+				break;
+			}
 			if (blocked(t, &src)) break;
 			ray.push_back(t);
 		}
@@ -82,4 +94,11 @@ bool BombManager::hits(const glm::ivec2& boxPos, const glm::ivec2& boxSize) cons
 	for (const auto& b : bombs)
 		if (b->hits(boxPos, boxSize)) return true;
 	return false;
+}
+
+std::vector<glm::ivec2> BombManager::takeDestroyedTiles()
+{
+	std::vector<glm::ivec2> out;
+	out.swap(destroyedTiles);
+	return out;
 }

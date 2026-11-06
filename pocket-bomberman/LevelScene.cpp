@@ -21,7 +21,8 @@ void LevelScene::initObjects()
 	const glm::vec2 minCoords = glm::vec2(SCREEN_OFFSET_X, SCREEN_OFFSET_Y);
 	map = TileMap::createTileMap(file, minCoords, texProgram);
 
-	bombs = new BombManager(map, texProgram, maxBombs, bombRange);
+	bombs = new BombManager(map, texProgram);
+	powerUps = new PowerUpManager(map, texProgram);
 
 	player = new Player();
 	player->init(glm::ivec2(SCREEN_OFFSET_X, SCREEN_OFFSET_Y), texProgram);
@@ -37,6 +38,10 @@ void LevelScene::initObjects()
 
 void LevelScene::updateObjects(int deltaTime, int currentTime)
 {
+	if (enemyPlayerCollision()) {
+		hurtPlayer();
+	}
+
 	if (isGameOver) {
 		if (gameOverTimer > 0) {
 			--gameOverTimer;
@@ -51,10 +56,6 @@ void LevelScene::updateObjects(int deltaTime, int currentTime)
 		}
 	}
 
-	if (enemyPlayerCollision() && !isGameOver) {
-		isGameOver = true;
-		player->setDead();
-	}
 
 	if (gui->updateTimer(std::max(0, int(timer - currentTime / 1000))) == 0 && !isGameOver) {
 		isGameOver = true;
@@ -63,25 +64,54 @@ void LevelScene::updateObjects(int deltaTime, int currentTime)
 
 	gui->setEnemyCount(enemies.size());
 
-
 	player->update(deltaTime);
 
-
 	const glm::vec2 playerPos = player->getPosition();
-	const glm::ivec2 feet(int(playerPos.x) + SIZE_PLAYER.x / 2, int(playerPos.y) + SIZE_PLAYER.y - 1);
 	const glm::ivec2 boxPos = glm::ivec2(playerPos) + PLAYER_COLLISION_OFFSET;
+	const glm::ivec2 center(boxPos.x + SIZE_PLAYER_COLLISION.x / 2, boxPos.y + SIZE_PLAYER_COLLISION.y / 2);
 
-	if (!isGameOver) bombs->update(deltaTime, boxPos, feet, SIZE_PLAYER_COLLISION);
+	if (!isGameOver) bombs->update(deltaTime, boxPos, center, SIZE_PLAYER_COLLISION);
 
-	if (!isGameOver && bombs->hits(boxPos, SIZE_PLAYER_COLLISION) && !player->isGodMode()) {
-		isGameOver = true;
-		player->setDead();
+	// Destroyed tiles may drop a power-up
+	for (const glm::ivec2& t : bombs->takeDestroyedTiles())
+		powerUps->maybeSpawn(t);
+
+	// Pickups
+	if (!isGameOver) {
+		Stats& stats = Stats::getInstance();
+		for (PowerUpType type : powerUps->collect(boxPos, SIZE_PLAYER_COLLISION)) {
+			switch (type) {
+			case POWERUP_BOMB:  stats.increaseBombAmount(); break;
+			case POWERUP_FIRE:  stats.increaseBombRange();  break;
+			case POWERUP_SPEED: stats.increaseSpeed();      break;
+			case POWERUP_STAR:  player->setInvincible(10000); break;   // 10 s
+			case POWERUP_HEART: stats.setHeart(true); break;
+			default: break;
+			}
+		}
+	}
+
+	// Explosion kills the player
+	if (bombs->hits(boxPos, SIZE_PLAYER_COLLISION)) {
+		hurtPlayer();
 	}
 
 	enemies.erase(std::remove_if(enemies.begin(), enemies.end(),
 		[&](const std::unique_ptr<Enemy>& e) {
           return e->onBombHit(*bombs);
 		}), enemies.end());
+
+	// All enemies dead -> open the door
+	if (!isGameOver && !doorOpened && enemies.empty()) {
+		map->openDoor();
+		doorOpened = true;
+	}
+
+	// Touching the open door -> next level
+	if (!isGameOver && map->touchesOpenDoor(boxPos, SIZE_PLAYER_COLLISION)) {
+		Game::instance().changeScene(nextLevelId());
+		return;   // the scene was just deleted, don't touch members after this
+	}
 
 	cam->setTarget(player->getPosition());
 	cam->update();
@@ -100,6 +130,7 @@ void LevelScene::renderObjects()
 	// simpleProgram.setUniformMatrix4f("modelview", view);
 
 	map->render();
+	powerUps->render(view);
 	bombs->render(view);
 	player->render(view);
 
@@ -113,6 +144,7 @@ void LevelScene::renderObjects()
 }
 
 void LevelScene::deleteObjects() {
+	delete powerUps; powerUps = nullptr;
 	delete bombs;  bombs = nullptr;
 	delete map;    map = nullptr;
 	delete gui;    gui = nullptr;
@@ -135,8 +167,6 @@ glm::vec2 LevelScene::getInitialPlayerTilePos() const {
 }
 
 bool LevelScene::enemyPlayerCollision() const {
-	if (player->isGodMode()) return false;
-
 	const glm::ivec2 playerBox = glm::ivec2(player->getPosition()) + PLAYER_COLLISION_OFFSET;
 	for (const auto& enemy : enemies) {
        if (enemy->hitsPlayer())
@@ -150,4 +180,18 @@ bool LevelScene::enemyPlayerCollision() const {
 		}
 	}
 	return false;
+}
+void LevelScene::hurtPlayer()
+{
+	if (isGameOver || player->isInvincible()) return;
+
+	Stats& stats = Stats::getInstance();
+	if (stats.hasHeart()) {
+		player->setInvincible(3000);  // 2 s of grace, with blinking
+		stats.setHeart(false);        // the extra hit absorbs the damage
+		return;
+	}
+
+	isGameOver = true;
+	player->setDead();
 }

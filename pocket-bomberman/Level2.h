@@ -36,6 +36,7 @@ private:
 	void onLevelInit() override;
 	void onLevelUpdate(int deltaTime) override;
 	void onLevelRender() override;
+	int nextLevelId() const override { return LV3; };
 };
 
 #endif // _LEVEL2_INCLUDE

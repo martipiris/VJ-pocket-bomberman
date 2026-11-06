@@ -30,6 +30,7 @@ private:
 	void onLevelInit() override;
 	void onLevelUpdate(int deltaTime) override;
 	void onLevelRender() override;
+	int nextLevelId() const override { return CREDITS; };
 };
 
 #endif // _LEVEL4_INCLUDE
