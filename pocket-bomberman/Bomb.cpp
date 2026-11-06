@@ -2,7 +2,7 @@
 
 namespace {
 	const int FUSE_TIME = 2000;
-	const int EXPLOSION_TIME = 600;   // 3 phases x 200 ms
+	const int EXPLOSION_TIME = 300;   // 3 phases x 100 ms
 	const int HIT_MARGIN = 6;
 
 	// Sheet: 3 columns (animation frames) x 8 rows (pieces)
@@ -71,7 +71,7 @@ void Bomb::detonate(const std::vector<BlastTile>& tiles)
 	for (const BlastTile& bt : blastTiles) {
 		std::unique_ptr<Sprite> s(Sprite::createSprite(glm::vec2(ts), CELL, texture, program));
 		s->setNumberAnimations(1);
-		s->setAnimationSpeed(0, 5);                       // 5 frames/s -> 200 ms per phase
+		s->setAnimationSpeed(0, 10);                       // 10 frames/s -> 100 ms per phase
 		s->addKeyframe(0, cell(0, blastRow(bt.part)));    // full explosion
 		s->addKeyframe(0, cell(1, blastRow(bt.part)));    // mid fizzling out
 		s->addKeyframe(0, cell(2, blastRow(bt.part)));    // almost fizzled out

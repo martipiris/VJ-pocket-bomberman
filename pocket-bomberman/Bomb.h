@@ -7,7 +7,7 @@
 #include "libs/Sprite.h"
 #include "libs/TileMap.h"
 
-#define SIZE_BOMB glm::ivec2(48, 48)
+#define SIZE_BOMB glm::ivec2(64, 64)
 
 enum BlastPart { CENTER, ARM_H, ARM_V, CAP_RIGHT, CAP_LEFT, CAP_DOWN, CAP_UP };
 

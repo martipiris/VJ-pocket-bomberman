@@ -66,17 +66,11 @@ void LevelScene::updateObjects(int deltaTime, int currentTime)
 
 	player->update(deltaTime);
 
-	const glm::vec2 p = player->getPosition();
-	const glm::ivec2 boxPos = glm::ivec2(p) + PLAYER_COLLISION_OFFSET;
+	const glm::vec2 playerPos = player->getPosition();
+	const glm::ivec2 boxPos = glm::ivec2(playerPos) + PLAYER_COLLISION_OFFSET;
+	const glm::ivec2 center(boxPos.x + SIZE_PLAYER_COLLISION.x / 2, boxPos.y + SIZE_PLAYER_COLLISION.y / 2);
 
-	if (!isGameOver && Game::instance().isKeyPressedOnce(GLFW_KEY_Z)) {
-		// Center of the player's collision box
-		glm::ivec2 center(boxPos.x + SIZE_PLAYER_COLLISION.x / 2,
-			boxPos.y + SIZE_PLAYER_COLLISION.y / 2);
-		bombs->tryPlace(map->pixel2Tile(center));
-	}
-
-	bombs->update(deltaTime, boxPos, SIZE_PLAYER_COLLISION);
+	if (!isGameOver) bombs->update(deltaTime, boxPos, center, SIZE_PLAYER_COLLISION);
 
 	// Destroyed tiles may drop a power-up
 	for (const glm::ivec2& t : bombs->takeDestroyedTiles())
@@ -102,10 +96,9 @@ void LevelScene::updateObjects(int deltaTime, int currentTime)
 		hurtPlayer();
 	}
 
-	// Explosion kills enemies
 	enemies.erase(std::remove_if(enemies.begin(), enemies.end(),
 		[&](const std::unique_ptr<Enemy>& e) {
-			return bombs->hits(glm::ivec2(e->getPosition()) + ENEMY_COLLISION_OFFSET, SIZE_ENEMY_COLLISION);
+          return e->onBombHit(*bombs);
 		}), enemies.end());
 
 	// All enemies dead -> open the door
@@ -174,11 +167,15 @@ glm::vec2 LevelScene::getInitialPlayerTilePos() const {
 }
 
 bool LevelScene::enemyPlayerCollision() const {
+	const glm::ivec2 playerBox = glm::ivec2(player->getPosition()) + PLAYER_COLLISION_OFFSET;
 	for (const auto& enemy : enemies) {
-		const glm::vec2 enemyPos = enemy->getPosition();
-		const glm::vec2 playerPos = player->getPosition();
-		if (std::abs(enemyPos.x - playerPos.x) < SIZE_ENEMY_COLLISION.x &&
-			std::abs(enemyPos.y - playerPos.y) < SIZE_ENEMY_COLLISION.y) {
+       if (enemy->hitsPlayer())
+			return true;
+		const glm::ivec2 enemyBox = glm::ivec2(enemy->getPosition()) + enemy->getCollisionOffset();
+		if (playerBox.x < enemyBox.x + enemy->getCollisionSize().x &&
+			playerBox.x + SIZE_PLAYER_COLLISION.x > enemyBox.x &&
+			playerBox.y < enemyBox.y + enemy->getCollisionSize().y &&
+			playerBox.y + SIZE_PLAYER_COLLISION.y > enemyBox.y) {
 			return true;
 		}
 	}
@@ -186,7 +183,6 @@ bool LevelScene::enemyPlayerCollision() const {
 }
 void LevelScene::hurtPlayer()
 {
-
 	if (isGameOver || player->isInvincible()) return;
 
 	Stats& stats = Stats::getInstance();

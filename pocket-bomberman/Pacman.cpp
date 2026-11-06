@@ -5,14 +5,14 @@ Pacman::Pacman() : Enemy() {}
 Pacman::~Pacman() = default;
 
 enum PacmanAnims {
+	EXPLODE,
 	MOVE_LEFT, DASH_LEFT,
 	MOVE_RIGHT, DASH_RIGHT,
-	EXPLODE
 };
 
 void Pacman::init() {
 	spritesheet.loadFromFile("images/pacman.png", TEXTURE_PIXEL_FORMAT_RGBA);
-	sprite = Sprite::createSprite(SIZE_ENEMY, glm::vec2(0.25f, 0.25f), &spritesheet, &texProgram);
+	sprite = Sprite::createSprite(enemySize, glm::vec2(0.25f, 0.25f), &spritesheet, &texProgram);
 	sprite->setNumberAnimations(5);
 
 	sprite->setAnimationSpeed(MOVE_LEFT, 3);

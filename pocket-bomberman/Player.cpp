@@ -83,6 +83,10 @@ void Player::update(int deltaTime) {
 	if (invincibleTimer > 0)
 		invincibleTimer = std::max(0, invincibleTimer - deltaTime);
 
+	if (Game::instance().isKeyPressedOnce(GLFW_KEY_G)) {
+		invincibleTimer = invincibleTimer > 0 ? 0 : 99999999;
+	}
+
 	if (!isDead) {
 		updateMovement(deltaTime);
 	}
@@ -123,7 +127,7 @@ void Player::updateMovement(int deltaTime) {
 		posPlayerF.x = float(posPlayer.x);
 	}
 
-	if (onGround && Game::instance().getKey(GLFW_KEY_X)) {
+	if (onGround && !map->isTileSolid(glm::ivec2(posPlayer.x + PLAYER_COLLISION_OFFSET.x, posPlayer.y - 1)) && Game::instance().getKey(RETURN_KEY)) {
 		velY = -jumpSpeed;
 		onGround = false;
 
@@ -210,7 +214,7 @@ void Player::render(const glm::mat4& view) {
 }
 
 void Player::setInvincible(int ms) {
-	invincibleTimer = ms;
+	if (invincibleTimer == 0) invincibleTimer = ms;
 }
 
 void Player::setTileMap(TileMap *tileMap) {

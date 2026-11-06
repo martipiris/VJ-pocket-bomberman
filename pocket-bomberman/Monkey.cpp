@@ -5,7 +5,7 @@ Monkey::Monkey() : Enemy() {}
 Monkey::~Monkey() = default;
 
 enum monkeyAnims {
-	MOVE, EXPLODE
+	EXPLODE, MOVE
 };
 
 enum monkeyState {
@@ -14,7 +14,7 @@ enum monkeyState {
 
 void Monkey::init() {
 	spritesheet.loadFromFile("images/monkey.png", TEXTURE_PIXEL_FORMAT_RGBA);
-	sprite = Sprite::createSprite(SIZE_ENEMY, glm::vec2(0.2f, 1.f), &spritesheet, &texProgram);
+	sprite = Sprite::createSprite(enemySize, glm::vec2(0.2f, 1.f), &spritesheet, &texProgram);
 	sprite->setNumberAnimations(2);
 
 	sprite->setAnimationSpeed(MOVE, 3);
