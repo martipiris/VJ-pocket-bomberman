@@ -15,7 +15,7 @@ public:
 			"No deixis que els enemics et toquin!",
 			"Vigila el temps!",
 			"Les fulles contenen millores utils"
-			}) {
+            }, "", true, "instructions_theme") {
 	}
 };
 

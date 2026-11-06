@@ -14,7 +14,8 @@ public:
 	TextPageScene(const std::string& title,
 		const std::vector<std::string>& lines,
 		const std::string& footnote = "",
-		bool bullets = true);
+       bool bullets = true,
+		const std::string& musicTrack = "");
 
 	void initObjects() override;
 	void renderObjects() override;
@@ -26,6 +27,7 @@ private:
 	void drawRow(const std::string& line, float x, float baseline, float maxRight);
 
 	std::string title, footnote;
+ std::string musicTrack;
 	std::vector<std::string> lines;
 	bool bullets;
 

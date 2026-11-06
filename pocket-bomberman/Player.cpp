@@ -34,7 +34,7 @@ void Player::init(const glm::ivec2 &tileMapPos, ShaderProgram &shaderProgram) {
 	onGround = false;
 	spritesheet.loadFromFile("images/player.png", TEXTURE_PIXEL_FORMAT_RGBA);
 	sprite = Sprite::createSprite(SIZE_PLAYER, glm::vec2(0.2f, 0.2f), &spritesheet, &shaderProgram);
-	sprite->setNumberAnimations(12);
+	sprite->setNumberAnimations(11);
 
 	sprite->setAnimationSpeed(STAND_LEFT, 8);
 	sprite->addKeyframe(STAND_LEFT, glm::vec2(0.f, 0.f));
@@ -77,6 +77,9 @@ void Player::init(const glm::ivec2 &tileMapPos, ShaderProgram &shaderProgram) {
 	sprite->addKeyframe(EXPLODE, glm::vec2(0.4f, 0.6f));
 	sprite->addKeyframe(EXPLODE, glm::vec2(0.6f, 0.6f));
 
+	sprite->setAnimationSpeed(WIN, 0);
+	sprite->addKeyframe(WIN, glm::vec2(0.8f, 0.4f));
+
 	sprite->changeAnimation(STAND_RIGHT);
 	tileMapDispl = tileMapPos;
 	// posPlayerF se ajusta desde setPosition() que llama LevelScene después de init
@@ -86,6 +89,14 @@ void Player::init(const glm::ivec2 &tileMapPos, ShaderProgram &shaderProgram) {
 void Player::update(int deltaTime) {
 	sprite->update(deltaTime);
 
+	if (isWinning)
+		return;
+
+	if (isDead) {
+		deadTimer -= deltaTime;
+		return;
+	}
+
 	if (invincibleTimer > 0)
 		invincibleTimer = std::max(0, invincibleTimer - deltaTime);
 
@@ -93,12 +104,7 @@ void Player::update(int deltaTime) {
 		invincibleTimer = invincibleTimer > 0 ? 0 : 99999999;
 	}
 
-	if (!isDead) {
-		updateMovement(deltaTime);
-	}
-	else {
-		deadTimer -= deltaTime;
-	}
+	updateMovement(deltaTime);
 }
 
 void Player::updateMovement(int deltaTime) {
@@ -226,6 +232,13 @@ void Player::render(const glm::mat4& view) {
 
 void Player::setInvincible(int ms) {
 	if (invincibleTimer == 0) invincibleTimer = ms;
+}
+
+void Player::startWinningAnimation() {
+	if (isWinning) return;
+	isWinning = true;
+	velY = 0.f;
+	sprite->changeAnimation(WIN);
 }
 
 void Player::setTileMap(TileMap *tileMap) {

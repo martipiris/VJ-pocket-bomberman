@@ -16,7 +16,7 @@ public:
 			"Art personalitzat - Oscar"
 			},
 			"Utilitzant recursos de Pocket Bomberman",
-			false) {
+            false, "credits_theme") {
 	}   // no bullets: the name on the right is enough
 };
 

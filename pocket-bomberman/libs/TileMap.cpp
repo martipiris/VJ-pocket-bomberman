@@ -410,8 +410,9 @@ bool TileMap::touchesOpenDoor(const glm::ivec2& boxPos, const glm::ivec2& boxSiz
 {
 	if (!doorOpen) return false;
 
-	const glm::ivec2 p = tile2Pixel(doorTile) + glm::ivec2(DOOR_MARGIN);
-	const int s = tileSize - 2 * DOOR_MARGIN;
-	return boxPos.x < p.x + s && boxPos.x + boxSize.x > p.x &&
-		boxPos.y < p.y + s && boxPos.y + boxSize.y > p.y;
+    const glm::ivec2 doorCenter = tile2Pixel(doorTile) + glm::ivec2(tileSize / 2);
+	const glm::ivec2 playerCenter = boxPos + boxSize / 2;
+	const int centerMargin = tileSize / 4;
+	return playerCenter.x >= doorCenter.x - centerMargin && playerCenter.x <= doorCenter.x + centerMargin &&
+		playerCenter.y >= doorCenter.y - centerMargin && playerCenter.y <= doorCenter.y + centerMargin;
 }

@@ -23,13 +23,14 @@ namespace {
 }
 
 TextPageScene::TextPageScene(const std::string& title, const std::vector<std::string>& lines,
-	const std::string& footnote, bool bullets)
-	: title(title), footnote(footnote), lines(lines), bullets(bullets)
+  const std::string& footnote, bool bullets, const std::string& musicTrack)
+	: title(title), footnote(footnote), musicTrack(musicTrack), lines(lines), bullets(bullets)
 {
 }
 
 void TextPageScene::initObjects()
 {
+   musicId = Game::instance().audio().playSound(musicTrack, true);
 	text.init(MAIN_FONT);
 
 	header = Quad::createQuad(0.f, 0.f, float(SCREEN_WIDTH), HEADER_H, simpleProgram);
@@ -120,8 +121,10 @@ void TextPageScene::updateObjects(int deltaTime, int currentTime)
 {
 	// Ignore the first 400 ms so a key still held from the previous scene
 	// (X is also the jump key) doesn't send you straight back
-	if (currentTime > 400 && Game::instance().isKeyPressedOnce(RETURN_KEY))
+ if (currentTime > 400 && Game::instance().isKeyPressedOnce(RETURN_KEY)) {
+		Game::instance().audio().playSound("menu_select");
 		Game::instance().changeScene(STARTING);
+   }
 }
 
 void TextPageScene::deleteObjects()

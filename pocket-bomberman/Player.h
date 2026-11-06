@@ -26,6 +26,7 @@ public:
 
 	void setInvincible(int ms);
 	bool isInvincible() const { return invincibleTimer > 0; }
+	void startWinningAnimation();
 
 	void setDead(bool exploded);
 private:
@@ -49,6 +50,7 @@ private:
 
 	// Player states variables
 	bool isDead = false;
+    bool isWinning = false;
 	int invincibleTimer = 0;
 	int deadTimer = 300;
 

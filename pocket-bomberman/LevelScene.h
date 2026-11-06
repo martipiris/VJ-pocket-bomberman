@@ -51,6 +51,7 @@ protected:
 	virtual bool showExitHint() const { return true; }
 	virtual std::string introTitle() const { return "STAGE"; }
 	void startOutro();  
+	void startBossClear();
 
 	TileMap *map = nullptr;
 	Player *player = nullptr;
@@ -75,6 +76,7 @@ private:
 	std::string m_levelFile;
 	bool isGameOver = false;
 	bool doorOpened = false;
+	bool exitJinglePlaying = false;
 
 	int gameOverTimer = 30;
 	AudioManager::SoundId jingleID = 0;
