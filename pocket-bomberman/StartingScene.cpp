@@ -80,14 +80,18 @@ void StartingScene::initObjects() {
 
 	texs[3].loadFromFile("images/title_spritesheet.png", TEXTURE_PIXEL_FORMAT_RGBA);
 	texs[3].setMagFilter(GL_NEAREST);
+
+	musicId = Game::instance().audio().playSound("title_screen", true);
 }
 
 void StartingScene::updateObjects(int deltaTime, int currentTime) {
 
 	if (Game::instance().isKeyPressedOnce(GLFW_KEY_DOWN)) {
 		selectedOption = (selectedOption + 1) % 3;
+		Game::instance().audio().playSound("menu_move");
 	} else if (Game::instance().isKeyPressedOnce(GLFW_KEY_UP)) {
 		selectedOption = (selectedOption + 2) % 3; 
+		Game::instance().audio().playSound("menu_move");
 	}
 
 	if (Game::instance().isKeyPressedOnce(CONFIRM_KEY)) {
@@ -103,6 +107,7 @@ void StartingScene::updateObjects(int deltaTime, int currentTime) {
 				Game::instance().changeScene(CREDITS);
 				break;
 		}
+		Game::instance().audio().playSound("menu_select");
 	}
 }
 

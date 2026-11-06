@@ -76,11 +76,11 @@ private:
 	bool isGameOver = false;
 	bool doorOpened = false;
 
-
-	int gameOverTimer = 120;
+	int gameOverTimer = 30;
+	AudioManager::SoundId jingleID = 0;
 
 	bool enemyPlayerCollision() const;
-	void hurtPlayer();
+	void hurtPlayer(bool exploded);
 
 	enum Phase { INTRO_HOLD, INTRO_REVEAL, PLAYING, OUTRO_WIPE, OUTRO_HOLD };
 	Phase phase = INTRO_HOLD;
@@ -95,6 +95,8 @@ private:
 	void updateTransition(int deltaTime, int currentTime);
 	void renderTransition();
 	glm::vec2 introTextPos() const;
+
+	virtual void playSceneMusic();
 };
 
 

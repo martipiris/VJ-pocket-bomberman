@@ -8,7 +8,7 @@ Pollen::Pollen(const glm::vec2& position, const glm::vec2& direction, ShaderProg
 
     sprite->setNumberAnimations(1);
 
-    sprite->setAnimationSpeed(0, 3);
+    sprite->setAnimationSpeed(0, 6);
     sprite->addKeyframe(0, glm::vec2(0.f, 0.f));
     sprite->addKeyframe(0, glm::vec2(0.5f, 0.f));
 

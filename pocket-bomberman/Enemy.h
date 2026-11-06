@@ -14,11 +14,11 @@ public:
 
 	void init(const glm::ivec2& tileMapPos, TileMap* tileMap, Player* player, ShaderProgram& shaderProgram);
 
-    void update(int deltaTime);
+    void update(int deltaTime, bool isGameOver);
 	virtual void render(const glm::mat4& view);
 	virtual bool hitsPlayer() const;
 	virtual bool onBombHit(const BombManager& bombs);
-	void startExploding();
+	virtual void startExploding();
 
 	glm::vec2 getPosition() const;
 
