@@ -71,6 +71,12 @@ void Player::init(const glm::ivec2 &tileMapPos, ShaderProgram &shaderProgram) {
 	sprite->addKeyframe(DIE, glm::vec2(0.f, 0.4f));
 	sprite->addKeyframe(DIE, glm::vec2(0.2f, 0.4f));
 
+	sprite->setAnimationSpeed(EXPLODE, 8);
+	sprite->addKeyframe(EXPLODE, glm::vec2(0.f, 0.6f));
+	sprite->addKeyframe(EXPLODE, glm::vec2(0.2f, 0.6f));
+	sprite->addKeyframe(EXPLODE, glm::vec2(0.4f, 0.6f));
+	sprite->addKeyframe(EXPLODE, glm::vec2(0.6f, 0.6f));
+
 	sprite->changeAnimation(STAND_RIGHT);
 	tileMapDispl = tileMapPos;
 	// posPlayerF se ajusta desde setPosition() que llama LevelScene después de init
@@ -89,6 +95,9 @@ void Player::update(int deltaTime) {
 
 	if (!isDead) {
 		updateMovement(deltaTime);
+	}
+	else {
+		deadTimer -= deltaTime;
 	}
 }
 
@@ -137,6 +146,8 @@ void Player::updateMovement(int deltaTime) {
 		else {
 			sprite->changeAnimation(JUMP_RIGHT);
 		}
+
+		Game::instance().audio().playSound("jump");
 	}
 
 	velY += gravity * dt;
@@ -204,7 +215,7 @@ void Player::updateMovement(int deltaTime) {
 }
 
 void Player::render(const glm::mat4& view) {
-	if (!sprite) return;
+	if (!sprite ||(isDead && deadTimer < 0)) return;
 
 	// Blink: 100 ms visible, 100 ms hidden
 	if (invincibleTimer > 0 && !isDead && (invincibleTimer / 100) % 2 == 0)
@@ -231,10 +242,11 @@ glm::vec2 Player::getPosition() const {
 	return glm::vec2(float(tileMapDispl.x + posPlayer.x), float(tileMapDispl.y + posPlayer.y));
 }
 
-void Player::setDead() {
-	if (sprite->animation() != DIE) {
-		sprite->changeAnimation(DIE);
-	}
+void Player::setDead(bool exploded) {
+	sprite->changeAnimation(exploded ? EXPLODE : DIE);
+	Game::instance().audio().playSound(exploded ? "bomberman_explode" : "bomberman_hit");
+
 	isDead = true;
-	invincibleTimer = 0;   // the death animation must always be visible
+	invincibleTimer = 0;
+	deadTimer = exploded ? 300 : 600;
 }

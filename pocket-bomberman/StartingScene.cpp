@@ -88,8 +88,10 @@ void StartingScene::updateObjects(int deltaTime, int currentTime) {
 
 	if (Game::instance().isKeyPressedOnce(GLFW_KEY_DOWN)) {
 		selectedOption = (selectedOption + 1) % 3;
+		Game::instance().audio().playSound("menu_move");
 	} else if (Game::instance().isKeyPressedOnce(GLFW_KEY_UP)) {
 		selectedOption = (selectedOption + 2) % 3; 
+		Game::instance().audio().playSound("menu_move");
 	}
 
 	if (Game::instance().isKeyPressedOnce(CONFIRM_KEY)) {
@@ -105,6 +107,7 @@ void StartingScene::updateObjects(int deltaTime, int currentTime) {
 				Game::instance().changeScene(CREDITS);
 				break;
 		}
+		Game::instance().audio().playSound("menu_select");
 	}
 }
 

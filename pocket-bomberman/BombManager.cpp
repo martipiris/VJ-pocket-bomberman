@@ -18,18 +18,20 @@ bool BombManager::tryPlace(const glm::ivec2& tile)
 
 	const int range = Stats::getInstance().getBombRange();   // each bomb keeps the range it had when placed
 	bombs.push_back(std::make_unique<Bomb>(tile, range, map, &texture, program));
+	Game::instance().audio().playSound("bomb_place");
 	return true;
 }
 
-void BombManager::update(int deltaTime, const glm::ivec2& boxPos, const glm::ivec2& feet, const glm::ivec2& boxSize)
+void BombManager::update(bool isGameOver, int deltaTime, const glm::ivec2& boxPos, const glm::ivec2& feet, const glm::ivec2& boxSize)
 {
-	if (Game::instance().isKeyPressedOnce(CONFIRM_KEY))
+	if (!isGameOver && Game::instance().isKeyPressedOnce(CONFIRM_KEY))
 		tryPlace(map->pixel2Tile(feet));
 
 	for (auto& b : bombs) {
-		if (b->update(deltaTime)) {
+		if (b->update(deltaTime) && !isGameOver) {
 			std::vector<BlastTile> blast = computeBlast(*b);
 			b->detonate(blast);
+			Game::instance().audio().playSound("bomb_explode");
 
 			for (const BlastTile& bt : blast)
 				if (map->destroyTile(bt.pos))        

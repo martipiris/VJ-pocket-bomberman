@@ -61,27 +61,30 @@ void LevelScene::updateObjects(int deltaTime, int currentTime)
 	}
 
 	if (enemyPlayerCollision()) {
-		hurtPlayer();
+		hurtPlayer(false);
 	}
 
 	if (isGameOver) {
 		if (gameOverTimer > 0) {
+			if (gameOverTimer == 1)
+				jingleID = Game::instance().audio().playSound("death");
+
 			--gameOverTimer;
 		} else {
-			if (Stats::getInstance().getLives() == 0) {
-				Game::instance().changeScene(STARTING);
-			} else {
-				Stats::getInstance().decreaseLives();
-				Game::instance().changeScene(id());
+			if (Game::instance().audio().isSoundFinished(jingleID)) {
+				if (Stats::getInstance().getLives() == 0) {
+					Game::instance().changeScene(STARTING);
+				} else {
+					Stats::getInstance().decreaseLives();
+					Game::instance().changeScene(id());
+				}
+				return;
 			}
-			return;
 		}
 	}
 
-
-	if (gui->updateTimer(std::max(0, int(timer - (currentTime - playStartTime) / 1000))) == 0 && !isGameOver) {
-		isGameOver = true;
-		player->setDead();
+	if (!isGameOver && gui->updateTimer(std::max(0, int(timer - (currentTime - playStartTime) / 1000))) == 0) {
+		hurtPlayer(false);
 	}
 
 	gui->setEnemyCount(enemies.size());
@@ -92,7 +95,7 @@ void LevelScene::updateObjects(int deltaTime, int currentTime)
 	const glm::ivec2 boxPos = glm::ivec2(playerPos) + PLAYER_COLLISION_OFFSET;
 	const glm::ivec2 center(boxPos.x + SIZE_PLAYER_COLLISION.x / 2, boxPos.y + SIZE_PLAYER_COLLISION.y / 2);
 
-	if (!isGameOver) bombs->update(deltaTime, boxPos, center, SIZE_PLAYER_COLLISION);
+	bombs->update(isGameOver, deltaTime, boxPos, center, SIZE_PLAYER_COLLISION);
 
 	// Destroyed tiles may drop a power-up
 	for (const glm::ivec2& t : bombs->takeDestroyedTiles())
@@ -115,7 +118,7 @@ void LevelScene::updateObjects(int deltaTime, int currentTime)
 
 	// Explosion kills the player
 	if (bombs->hits(boxPos, SIZE_PLAYER_COLLISION)) {
-		hurtPlayer();
+		hurtPlayer(true);
 	}
 
 	enemies.erase(std::remove_if(enemies.begin(), enemies.end(),
@@ -125,7 +128,8 @@ void LevelScene::updateObjects(int deltaTime, int currentTime)
 
 	// Debug: K kills every enemy
 	if (!isGameOver && Game::instance().isKeyPressedOnce(GLFW_KEY_K)) {
-		enemies.clear();
+		for (auto& e : enemies)
+			e->startExploding();
 	}
 
 	// All enemies dead -> open the door
@@ -145,7 +149,7 @@ void LevelScene::updateObjects(int deltaTime, int currentTime)
 	cam->update();
 
 	for (auto& enemy : enemies) {
-		enemy->update(deltaTime);
+		enemy->update(deltaTime, isGameOver);
 	}
 
 	onLevelUpdate(deltaTime);
@@ -168,8 +172,6 @@ void LevelScene::renderObjects()
 
 	gui->render();
 	renderTransition();
-	onLevelRender();
-
 	onLevelRender();
 }
 
@@ -213,8 +215,7 @@ bool LevelScene::enemyPlayerCollision() const {
 	}
 	return false;
 }
-void LevelScene::hurtPlayer()
-{
+void LevelScene::hurtPlayer(bool exploded) {
 	if (isGameOver || player->isInvincible()) return;
 
 	Stats& stats = Stats::getInstance();
@@ -224,8 +225,10 @@ void LevelScene::hurtPlayer()
 		return;
 	}
 
+	Game::instance().audio().playSound(exploded ? "bomberman_explode" : "bomberman_hit");
+	Game::instance().audio().stopSound(musicId);
+	player->setDead(exploded);
 	isGameOver = true;
-	player->setDead();
 }
 
 void LevelScene::updateTransition(int deltaTime, int currentTime)
