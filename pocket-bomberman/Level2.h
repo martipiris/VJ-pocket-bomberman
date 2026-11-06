@@ -36,6 +36,7 @@ private:
 	void onLevelInit() override;
 	void onLevelUpdate(int deltaTime) override;
 	void onLevelRender() override;
+	std::string introTitle() const override { return "STAGE 2"; }
 	int nextLevelId() const override { return LV3; };
 };
 

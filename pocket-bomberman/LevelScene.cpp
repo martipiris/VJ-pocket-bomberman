@@ -5,6 +5,15 @@
 #include "StartingScene.h"
 #include <algorithm>
 
+namespace {
+	const int INTRO_HOLD_MS = 2000;
+	const int INTRO_REVEAL_MS = 700;
+	const int OUTRO_WIPE_MS = 700;
+	const int OUTRO_HOLD_MS = 700;
+	const int INTRO_TEXT_SIZE = 60;
+	const glm::vec4 WIPE_COLOR(0.12f, 0.12f, 0.13f, 1.f);
+}
+
 LevelScene::LevelScene(const std::string &levelFile)
 	: m_levelFile(levelFile), map(nullptr)
 {
@@ -34,10 +43,23 @@ void LevelScene::initObjects()
 	gui->init();
 
 	onLevelInit();
+
+	wipe = new ScreenWipe(simpleProgram);
+	introText = new Text();
+	introText->init(MAIN_FONT);
+	cam->update();
+	gui->updateTimer(timer);
+	gui->setEnemyCount(enemies.size());
+	gui->render();
 }
 
 void LevelScene::updateObjects(int deltaTime, int currentTime)
 {
+	if (phase != PLAYING) {
+		updateTransition(deltaTime, currentTime);
+		return;
+	}
+
 	if (enemyPlayerCollision()) {
 		hurtPlayer();
 	}
@@ -57,7 +79,7 @@ void LevelScene::updateObjects(int deltaTime, int currentTime)
 	}
 
 
-	if (gui->updateTimer(std::max(0, int(timer - currentTime / 1000))) == 0 && !isGameOver) {
+	if (gui->updateTimer(std::max(0, int(timer - (currentTime - playStartTime) / 1000))) == 0 && !isGameOver) {
 		isGameOver = true;
 		player->setDead();
 	}
@@ -101,6 +123,11 @@ void LevelScene::updateObjects(int deltaTime, int currentTime)
           return e->onBombHit(*bombs);
 		}), enemies.end());
 
+	// Debug: K kills every enemy
+	if (!isGameOver && Game::instance().isKeyPressedOnce(GLFW_KEY_K)) {
+		enemies.clear();
+	}
+
 	// All enemies dead -> open the door
 	if (!isGameOver && !doorOpened && enemies.empty()) {
 		map->openDoor();
@@ -109,8 +136,9 @@ void LevelScene::updateObjects(int deltaTime, int currentTime)
 
 	// Touching the open door -> next level
 	if (!isGameOver && map->touchesOpenDoor(boxPos, SIZE_PLAYER_COLLISION)) {
-		Game::instance().changeScene(nextLevelId());
-		return;   // the scene was just deleted, don't touch members after this
+		phase = OUTRO_WIPE;
+		phaseTimer = 0;
+		return;
 	}
 
 	cam->setTarget(player->getPosition());
@@ -139,6 +167,8 @@ void LevelScene::renderObjects()
 	}
 
 	gui->render();
+	renderTransition();
+	onLevelRender();
 
 	onLevelRender();
 }
@@ -150,6 +180,8 @@ void LevelScene::deleteObjects() {
 	delete gui;    gui = nullptr;
 	delete player; player = nullptr;
 	delete cam;    cam = nullptr;
+	delete wipe;      wipe = nullptr;
+	delete introText; introText = nullptr;
 }
 
 std::string LevelScene::getLevelFile() const {
@@ -194,4 +226,64 @@ void LevelScene::hurtPlayer()
 
 	isGameOver = true;
 	player->setDead();
+}
+
+void LevelScene::updateTransition(int deltaTime, int currentTime)
+{
+	phaseTimer += deltaTime;
+
+	switch (phase) {
+	case INTRO_HOLD:
+		if (phaseTimer >= INTRO_HOLD_MS) { phase = INTRO_REVEAL; phaseTimer = 0; }
+		break;
+	case INTRO_REVEAL:
+		if (phaseTimer >= INTRO_REVEAL_MS) {
+			phase = PLAYING;
+			phaseTimer = 0;
+			playStartTime = currentTime;   // the level clock starts now
+		}
+		break;
+	case OUTRO_WIPE:
+		if (phaseTimer >= OUTRO_WIPE_MS) { phase = OUTRO_HOLD; phaseTimer = 0; }
+		break;
+	case OUTRO_HOLD:
+		if (phaseTimer >= OUTRO_HOLD_MS)
+			Game::instance().changeScene(nextLevelId());   // deletes this scene: touch nothing after this
+		break;
+	default:
+		break;
+	}
+}
+
+void LevelScene::renderTransition()
+{
+
+	switch (phase) {
+	case INTRO_HOLD:
+		wipe->drawSector(0.f, 1.f, WIPE_COLOR);
+		introText->render(introTitle(), introTextPos(), INTRO_TEXT_SIZE, glm::vec4(1.f));
+		break;
+	case INTRO_REVEAL: {
+		const float t = std::min(1.f, phaseTimer / float(INTRO_REVEAL_MS));
+		wipe->drawSector(t, 1.f, WIPE_COLOR);
+		introText->render(introTitle(), introTextPos(), INTRO_TEXT_SIZE, glm::vec4(1.f, 1.f, 1.f, 1.f - t));
+		break;
+	}
+	case OUTRO_WIPE: {
+		const float t = std::min(1.f, phaseTimer / float(OUTRO_WIPE_MS));
+		wipe->drawSector(0.f, t, WIPE_COLOR);
+		break;
+	}
+	case OUTRO_HOLD:
+		wipe->drawSector(0.f, 1.f, WIPE_COLOR);
+		break;
+	default:
+		break;
+	}
+}
+
+glm::vec2 LevelScene::introTextPos() const
+{
+	const float width = introText->getWidth(introTitle(), INTRO_TEXT_SIZE);
+	return glm::vec2((SCREEN_WIDTH - width) * 0.5f, 250.f);
 }

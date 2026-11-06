@@ -22,7 +22,8 @@ Bomb::Bomb(const glm::ivec2& tile, int range, TileMap* map, Texture* tex, Shader
 	state(FUSE), timer(FUSE_TIME), solid(false)
 {
 	// 2x2 sheet: top row = fuse frames, bottom row = explosion frames
-	fuseSprite.reset(Sprite::createSprite(glm::vec2(SIZE_BOMB), CELL, tex, &program));
+	const int ts = map->getTileSize();
+	fuseSprite.reset(Sprite::createSprite(glm::vec2(ts), CELL, tex, &program));
 	fuseSprite->setNumberAnimations(1);
 	fuseSprite->setAnimationSpeed(0, 8);              // 8 frames/s -> one full pulse every 500 ms
 	fuseSprite->addKeyframe(0, cell(0, ROW_BOMB));    // sprite 1
@@ -31,8 +32,7 @@ Bomb::Bomb(const glm::ivec2& tile, int range, TileMap* map, Texture* tex, Shader
 	fuseSprite->addKeyframe(0, cell(1, ROW_BOMB));    // sprite 2
 	fuseSprite->changeAnimation(0);
 
-	glm::ivec2 offset = (glm::ivec2(map->getTileSize()) - SIZE_BOMB) / 2;
-	fuseSprite->setPosition(glm::vec2(map->tile2Pixel(tile) + offset));
+	fuseSprite->setPosition(glm::vec2(map->tile2Pixel(tile)));
 }
 
 Bomb::~Bomb() {}   // unique_ptrs clean up the sprites; don't touch the map here
