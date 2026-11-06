@@ -67,6 +67,12 @@ void LevelScene::updateObjects(int deltaTime, int currentTime)
 		updateTransition(deltaTime, currentTime);
 		return;
 	}
+	if (exitJinglePlaying) {
+		player->update(deltaTime);
+		if (Game::instance().audio().isSoundFinished(jingleID))
+			startOutro();
+		return;
+	}
 
 	if (enemyPlayerCollision()) {
 		hurtPlayer(false);
@@ -148,10 +154,13 @@ void LevelScene::updateObjects(int deltaTime, int currentTime)
 			exitTimer = EXIT_FLASH_MS;
 	}
 
-	// Touching the open door -> next level
-	if (!isGameOver && map->touchesOpenDoor(boxPos, SIZE_PLAYER_COLLISION)) {
+ // Reach the center of the open door to play the exit jingle and win animation
+	if (!isGameOver && map->touchesOpenDoor(glm::ivec2(boxPos.x - PLAYER_COLLISION_OFFSET.x, boxPos.y - PLAYER_COLLISION_OFFSET.y), SIZE_PLAYER_COLLISION)) {
 		exitTimer = 0;
-		startOutro();   // or the phase = OUTRO_WIPE lines, if you haven't added startOutro yet
+		player->startWinningAnimation();
+		jingleID = Game::instance().audio().playSound("stage_clear");
+		Game::instance().audio().stopSound(musicId);
+		exitJinglePlaying = true;
 		return;
 	}
 
@@ -329,6 +338,15 @@ void LevelScene::startOutro()
 	if (phase != PLAYING || isGameOver) return;
 	phase = OUTRO_WIPE;
 	phaseTimer = 0;
+}
+
+void LevelScene::startBossClear()
+{
+	if (phase != PLAYING || isGameOver || exitJinglePlaying) return;
+	player->startWinningAnimation();
+	Game::instance().audio().stopSound(musicId);
+	jingleID = Game::instance().audio().playSound("game_clear");
+	exitJinglePlaying = true;
 }
 
 void LevelScene::playSceneMusic() {

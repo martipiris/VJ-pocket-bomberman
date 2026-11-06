@@ -42,15 +42,9 @@ void StartingScene::initObjects() {
 	glm::vec2 texCoords[2];
 
 	// Title
-	glm::vec2 geom[2] = { glm::vec2(75.f, 0.f), glm::vec2(SCREEN_WIDTH - 75, SCREEN_HEIGHT * 0.4375) };
+	glm::vec2 geom[2] = { glm::vec2(25.f, 0.f), glm::vec2(SCREEN_WIDTH - 25, SCREEN_HEIGHT * 0.4375) };
 	texCoords[0] = glm::vec2(0.f, 0.f); texCoords[1] = glm::vec2(0.66f, 0.73f);
 	title = TexturedQuad::createTexturedQuad(geom, texCoords, texProgram);
-
-	// Menu background
-	geom[0] = glm::vec2(220.f, 189.f); geom[1] = glm::vec2(SCREEN_WIDTH - 25, 400);
-
-	texCoords[0] = glm::vec2(0.f, 0.f); texCoords[1] = glm::vec2(1.f, 1.f);
-	menu_bg = TexturedQuad::createTexturedQuad(geom, texCoords, texProgram);
 
 	texs[0].loadFromFile("images/title_spritesheet.png", TEXTURE_PIXEL_FORMAT_RGBA);
 	texs[0].setMagFilter(GL_NEAREST);

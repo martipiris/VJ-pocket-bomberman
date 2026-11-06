@@ -45,7 +45,7 @@ int main(void)
 	glfwWindowHint(GLFW_FOCUSED, GLFW_TRUE);
 
 	/* Create a windowed mode window and its OpenGL context */
-	window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Pocket Borgerman", NULL, NULL);
+	window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Pocket Burgerman", NULL, NULL);
 	if (!window)
 	{
 		glfwTerminate();
