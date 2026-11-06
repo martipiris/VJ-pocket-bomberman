@@ -23,6 +23,7 @@ protected:
 	glm::vec2 getPlayerInitialTile() const override {
 		return glm::vec2(4, 8);
 	}
+	bool showExitHint() const override { return false; }
 
 private:
 	glm::ivec2 bossCoords = glm::ivec2(7, 4);
