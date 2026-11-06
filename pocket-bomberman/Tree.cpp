@@ -114,6 +114,7 @@ void Tree::updateMovement() {
 		return;
 	}
 
+	// Boss moves towards the player
 	if (state == WANDER) {
 		const glm::vec2 playerPos = player->getPosition();
 		const int treeCenterX = posEnemy.x + enemySize.x / 2;
@@ -132,6 +133,8 @@ void Tree::updateMovement() {
 			timer = 0;
 		}
 	}
+
+	// Boss goes to first position
 	else if (state == RETURNING) {
 		if (posEnemy.x < initialPos.x) posEnemy.x = std::min(initialPos.x, posEnemy.x + 2);
 		else if (posEnemy.x > initialPos.x) posEnemy.x = std::max(initialPos.x, posEnemy.x - 2);
@@ -150,6 +153,8 @@ void Tree::updateMovement() {
 		}
 		++returnTimer;
 	}
+
+	// Boss sends attacks
 	else if (state == ATTACKING && ++attackTimer >= 30) {
 		attackTimer = 0;
 		++attackRound;
@@ -168,6 +173,7 @@ void Tree::updateMovement() {
 	}
 }
 
+// Pollen attack
 void Tree::startPollenRound() {
 	const glm::ivec2 mapPixels = map->getMapPixelSize();
 	const glm::vec2 center(mapPixels.x / 2.f - 8.f, mapPixels.y / 2.f - 4.f);
@@ -179,6 +185,7 @@ void Tree::startPollenRound() {
 		pollen.push_back(std::make_unique<Pollen>(center, direction, texProgram));
 }
 
+// Leaf attack
 void Tree::startLeafRound() {
   if (!leaves.empty())
 		return;
@@ -189,6 +196,7 @@ void Tree::startLeafRound() {
 	}
 }
 
+// Boss death animation
 void Tree::beginDeath() {
 	dying = true;
 	deathTimer = 0;

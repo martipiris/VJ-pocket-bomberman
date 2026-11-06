@@ -45,6 +45,7 @@ private:
 	Stat *stats[5];
 
 	Texture texs;
+	TexturedQuad* heartIcon = nullptr;
 
 	ShaderProgram program, texProgram;
 };

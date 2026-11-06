@@ -10,10 +10,10 @@ PowerUpManager::PowerUpManager(TileMap* map, ShaderProgram& program, int dropPer
 
 void PowerUpManager::maybeSpawn(const glm::ivec2& tile)
 {
-	// 1. Does this tile drop anything at all?
+	// Random check to see if powerup spawns
 	if (int(rng() % 100) >= dropPercent) return;
 
-	// 2. Which type? Weights are relative, in the same order as the PowerUpType enum
+	// Weight chances for every pwerup, in order of the enum
 	static const int weights[POWERUP_COUNT] = {
 		30,   // POWERUP_BOMB
 		30,   // POWERUP_FIRE

@@ -1,7 +1,7 @@
 #include "Bomb.h"
 
 namespace {
-	const int FUSE_TIME = 2000;
+	const int FUSE_TIME = 2000;       //Time it takes for the bomb to explode
 	const int EXPLOSION_TIME = 300;   // 3 phases x 100 ms
 	const int HIT_MARGIN = 6;
 
@@ -12,7 +12,7 @@ namespace {
 
 	glm::vec2 cell(int col, int row) { return glm::vec2(col * CELL.x, row * CELL.y); }
 
-	const int ROW_BOMB = 0;
+	const int ROW_BOMB = 0;          //Spritesheet row of the bomb itself
 	// Blast rows follow BlastPart order: row = 1 + part
 	int blastRow(BlastPart p) { return 1 + int(p); }
 }
@@ -35,8 +35,9 @@ Bomb::Bomb(const glm::ivec2& tile, int range, TileMap* map, Texture* tex, Shader
 	fuseSprite->setPosition(glm::vec2(map->tile2Pixel(tile)));
 }
 
-Bomb::~Bomb() {}   // unique_ptrs clean up the sprites; don't touch the map here
+Bomb::~Bomb() {}   
 
+// Bomb update handler
 bool Bomb::update(int deltaTime)
 {
 	if (state == DONE) return false;
@@ -53,6 +54,7 @@ bool Bomb::update(int deltaTime)
 	return false;
 }
 
+//Bomb detonation handler
 void Bomb::detonate(const std::vector<BlastTile>& tiles)
 {
 	state = EXPLODING;
@@ -81,6 +83,7 @@ void Bomb::detonate(const std::vector<BlastTile>& tiles)
 	}
 }
 
+ //Manages the dynamic solidity 
 void Bomb::updateSolidity(const glm::ivec2& boxPos, const glm::ivec2& boxSize)
 {
 	if (solid || state != FUSE) return;
@@ -96,6 +99,8 @@ void Bomb::updateSolidity(const glm::ivec2& boxPos, const glm::ivec2& boxSize)
 	}
 }
 
+
+//Checks if explosion is hitting something
 bool Bomb::hits(const glm::ivec2& boxPos, const glm::ivec2& boxSize) const
 {
 	if (state != EXPLODING) return false;
@@ -110,7 +115,7 @@ bool Bomb::hits(const glm::ivec2& boxPos, const glm::ivec2& boxSize) const
 	}
 	return false;
 }
-
+ 
 void Bomb::render(const glm::mat4& view)
 {
 	if (state == FUSE) {

@@ -71,6 +71,7 @@ private:
 	glm::vec2 tileTexSize;
 	int *map;
 
+	// Dinamyc solidity for when bombs are placed
 	bool solidAt(int x, int y) const;
 	std::vector<char> dynamicSolid;
 	TexturedQuad* backgroundQuad;

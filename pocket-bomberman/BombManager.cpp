@@ -16,16 +16,19 @@ bool BombManager::tryPlace(const glm::ivec2& tile)
 		if (b->getTile() == tile) return false;
 	if (map->isTileSolid(map->tile2Pixel(tile))) return false;
 
-	const int range = Stats::getInstance().getBombRange();   // each bomb keeps the range it had when placed
+	const int range = Stats::getInstance().getBombRange();   // Each bomb keeps the range it had when placed
 	bombs.push_back(std::make_unique<Bomb>(tile, range, map, &texture, program));
 	return true;
 }
 
+ //Handles the placing and exploding of the bombs
 void BombManager::update(int deltaTime, const glm::ivec2& boxPos, const glm::ivec2& feet, const glm::ivec2& boxSize)
-{
+{	
+	//Bomb placing check
 	if (Game::instance().isKeyPressedOnce(CONFIRM_KEY))
 		tryPlace(map->pixel2Tile(feet));
 
+	//Bomb explosion check
 	for (auto& b : bombs) {
 		if (b->update(deltaTime)) {
 			std::vector<BlastTile> blast = computeBlast(*b);
@@ -37,6 +40,8 @@ void BombManager::update(int deltaTime, const glm::ivec2& boxPos, const glm::ive
 		}
 		b->updateSolidity(boxPos, boxSize);
 	}
+
+	//Remove all bombs that exploded
 	bombs.erase(std::remove_if(bombs.begin(), bombs.end(),
 		[](const std::unique_ptr<Bomb>& b) { return b->isDone(); }), bombs.end());
 }
@@ -46,6 +51,7 @@ void BombManager::render(const glm::mat4& view)
 	for (auto& b : bombs) b->render(view);
 }
 
+ //Check if the bomb blast is being stopped by a solid object like a bomb or a wall
 bool BombManager::blocked(const glm::ivec2& t, const Bomb* self) const
 {
 	const glm::ivec2 size = map->getMapSize();
@@ -57,6 +63,7 @@ bool BombManager::blocked(const glm::ivec2& t, const Bomb* self) const
 	return false;
 }
 
+ //Computes how the blast of an explosion should work
 std::vector<BlastTile> BombManager::computeBlast(const Bomb& src) const
 {
 	struct Dir { glm::ivec2 d; BlastPart arm, cap; };
@@ -89,6 +96,7 @@ std::vector<BlastTile> BombManager::computeBlast(const Bomb& src) const
 	return tiles;
 }
 
+ //Checks if any bomb explosion is hitting something
 bool BombManager::hits(const glm::ivec2& boxPos, const glm::ivec2& boxSize) const
 {
 	for (const auto& b : bombs)
@@ -96,6 +104,7 @@ bool BombManager::hits(const glm::ivec2& boxPos, const glm::ivec2& boxSize) cons
 	return false;
 }
 
+ //Returns destroyed tiles' position and clears the list
 std::vector<glm::ivec2> BombManager::takeDestroyedTiles()
 {
 	std::vector<glm::ivec2> out;
