@@ -21,7 +21,7 @@ void Enemy::init(const glm::ivec2& tileMapPos, TileMap* tileMap, Player* player,
 
 void Enemy::update(int deltaTime, bool isGameOver) {
 	sprite->update(deltaTime);
-
+	//If the enemy has been hit by a bomb it does not move
 	if (exploding) {
 		explosionTimer++;
 		updateWhileExploding(deltaTime);
@@ -41,6 +41,7 @@ bool Enemy::hitsPlayer() const {
 	return false;
 }
 
+ //See if explosion has hit an enemy and begin death process if so
 bool Enemy::onBombHit(const BombManager& bombs) {
 	const glm::ivec2 hitPosition = posEnemy + getCollisionOffset();	
 	if (!exploding && bombs.hits(hitPosition, getCollisionSize())) {
@@ -51,6 +52,7 @@ bool Enemy::onBombHit(const BombManager& bombs) {
 	return exploding && explosionTimer >= 30;
 }
 
+ //Enemy begin of death process after being hit by explosion
 void Enemy::startExploding() {
 	if (exploding)
 		return;

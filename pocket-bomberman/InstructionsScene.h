@@ -1,36 +1,23 @@
 #ifndef _INSTRUCTIONS_SCENE_INCLUDE
 #define _INSTRUCTIONS_SCENE_INCLUDE
 
-#include "Scene.h"
-#include "libs/Text.h"
+#include "TextPageScene.h"
 
-class InstructionsScene : public Scene {
+ //Text for the instructions scene
+class InstructionsScene : public TextPageScene {
 public:
-	InstructionsScene() {};
-
-	void initObjects();
-	void renderObjects();
-	void updateObjects(int deltaTime, int currentTime);
-	void deleteObjects();
-
-private:
-	Text title;
-
-	static const int instructionLines = 7;
-
-	Text* instructionTexts[instructionLines];
-	string instructions[instructionLines] = {
-		"Mou-te amb: <- ->",
-		"Salta amb: X",
-		"Posa una bomba amb: Z",
-		"Explota els enemics per passar de nivell",
-		"No deixis que els enemics et toquin!",
-		"Vigila el temps!",
-		"Les fulles contenen millores utils",
-	};
-
-	Text backText;
+	InstructionsScene()
+		: TextPageScene("Instruccions", {
+			"Mou-te amb: <- ->",
+			"Salta amb: X",
+			"Posa una bomba amb: Z",
+			"Explota els enemics per passar de nivell",
+			"No deixis que els enemics et toquin!",
+			"Vigila el temps!",
+			"Les fulles contenen millores utils"
+			}) {
+	}
 };
 
-#endif //_INSTRUCTIONS_SCENE_INCLUDE
+#endif
 

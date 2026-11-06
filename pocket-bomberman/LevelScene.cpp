@@ -6,18 +6,20 @@
 #include <algorithm>
 
 namespace {
+	//Duration of transitions
 	const int INTRO_HOLD_MS = 2000;
 	const int INTRO_REVEAL_MS = 700;
 	const int OUTRO_WIPE_MS = 700;
 	const int OUTRO_HOLD_MS = 700;
+	//Exit text parameters
 	const int INTRO_TEXT_SIZE = 60;
 	const glm::vec4 WIPE_COLOR(0.12f, 0.12f, 0.13f, 1.f);
-	const int EXIT_FLASH_MS = 3000;   // total time the hint is active
-	const int EXIT_BLINK_MS = 300;    // visible/hidden interval
+	const int EXIT_FLASH_MS = 3000;   // Total time the text is active
+	const int EXIT_BLINK_MS = 300;    // Visible/hidden interval
 	const int EXIT_TEXT_SIZE = 60;
-	const int EXIT_OUTLINE_PX = 3;                              // outline thickness
+	const int EXIT_OUTLINE_PX = 3;    // Outline thickness
 	const glm::vec4 EXIT_OUTLINE_COLOR(0.f, 0.f, 0.f, 1.f);
-	const glm::vec4 EXIT_COLOR(0.7f, 0.25f, 0.9f, 1.f);   // purple
+	const glm::vec4 EXIT_COLOR(0.7f, 0.25f, 0.9f, 1.f);
 }
 
 LevelScene::LevelScene(const std::string &levelFile)
@@ -68,10 +70,12 @@ void LevelScene::updateObjects(int deltaTime, int currentTime)
 		return;
 	}
 
+	//Check if player touches enemy
 	if (enemyPlayerCollision()) {
 		hurtPlayer(false);
 	}
 
+	//Game over handler
 	if (isGameOver) {
 		if (gameOverTimer > 0) {
 			if (gameOverTimer == 1)
@@ -95,8 +99,10 @@ void LevelScene::updateObjects(int deltaTime, int currentTime)
 		hurtPlayer(false);
 	}
 
+	//Change the enemy count in the GUI
 	gui->setEnemyCount(enemies.size());
 
+	//Update player characer
 	player->update(deltaTime);
 
 	const glm::vec2 playerPos = player->getPosition();
@@ -184,13 +190,14 @@ void LevelScene::renderObjects()
 	}
 
 	gui->render();
+	//Render for the EXIT text after enemies died
 	if (phase == PLAYING && exitTimer > 0 && (exitTimer / EXIT_BLINK_MS) % 2 == 0) {
 		const std::string msg = "EXIT";
 		const float w = exitText->getWidth(msg, EXIT_TEXT_SIZE);
 		const float x = (SCREEN_WIDTH - w) * 0.5f;
-		const float y = SCREEN_HEIGHT * 0.5f + EXIT_TEXT_SIZE * 0.3f;   // vertically centered
+		const float y = SCREEN_HEIGHT * 0.5f + EXIT_TEXT_SIZE * 0.3f;
 
-		// Outline: black copies in 8 directions around the text
+		// Outline exit text
 		for (int dx = -1; dx <= 1; ++dx) {
 			for (int dy = -1; dy <= 1; ++dy) {
 				if (dx == 0 && dy == 0) continue;
@@ -200,7 +207,7 @@ void LevelScene::renderObjects()
 			}
 		}
 
-		// Purple text on top
+		// Exit text
 		exitText->render(msg, glm::vec2(x, y), EXIT_TEXT_SIZE, EXIT_COLOR);
 	}
 	renderTransition();
@@ -233,6 +240,7 @@ glm::vec2 LevelScene::getInitialPlayerTilePos() const {
 	return glm::vec2(pos.x * map->getTileSize(), pos.y * map->getTileSize());
 }
 
+ //Controller for colisions between player and enemies 
 bool LevelScene::enemyPlayerCollision() const {
 	const glm::ivec2 playerBox = glm::ivec2(player->getPosition()) + PLAYER_COLLISION_OFFSET;
 	for (const auto& enemy : enemies) {
@@ -264,6 +272,7 @@ void LevelScene::hurtPlayer(bool exploded) {
 	isGameOver = true;
 }
 
+ //Handler for the level transitions
 void LevelScene::updateTransition(int deltaTime, int currentTime)
 {
 	phaseTimer += deltaTime;

@@ -50,6 +50,7 @@ void Pacman::init() {
 	timer = 0;
 }
 
+ //Packman moves side to side except if player is in movement range goes towards him
 void Pacman::updateMovement() {
 	int tileSize = map->getTileSize();
 	

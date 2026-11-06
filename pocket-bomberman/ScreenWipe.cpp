@@ -7,8 +7,9 @@
 #include "Game.h"
 
 namespace {
-	const int SEGMENTS = 96;                 // triangles for a full turn
-	const float RADIUS = 400.f;              // larger than the half-diagonal of 480x480 (~340)
+	//Data for clockwise wipe animation
+	const int SEGMENTS = 96;                
+	const float RADIUS = 400.f;             
 	const float TWO_PI = 6.2831853f;
 }
 

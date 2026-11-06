@@ -32,6 +32,7 @@ void Monkey::init() {
 	timer = 0;
 }
 
+ //Monkey moves to a side untill it can no longer, then switches direction
 void Monkey::updateMovement() {
 	int tileSize = map->getTileSize();
 
