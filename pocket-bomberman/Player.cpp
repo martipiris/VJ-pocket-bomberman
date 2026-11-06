@@ -80,6 +80,9 @@ void Player::update(int deltaTime) {
 	if (!isDead) {
 		updateMovement(deltaTime);
 	}
+
+	if (Game::instance().isKeyPressedOnce(GLFW_KEY_G))
+		godMode = !godMode;
 }
 
 void Player::updateMovement(int deltaTime) {
@@ -116,7 +119,7 @@ void Player::updateMovement(int deltaTime) {
 		posPlayerF.x = float(posPlayer.x);
 	}
 
-	if (onGround && Game::instance().getKey(GLFW_KEY_X)) {
+	if (onGround && !map->isTileSolid(glm::ivec2(posPlayer.x + PLAYER_COLLISION_OFFSET.x, posPlayer.y - 1)) && Game::instance().getKey(RETURN_KEY)) {
 		velY = -jumpSpeed;
 		onGround = false;
 
@@ -215,4 +218,8 @@ void Player::setDead() {
 		sprite->changeAnimation(DIE);
 	}
 	isDead = true;
+}
+
+bool Player::isGodMode() const {
+	return godMode;
 }

@@ -1,6 +1,12 @@
 #include "Tree.h"
+#include <algorithm>
+#include <cstdlib>
+#include "Tree.h"
+#include "BombManager.h"
 
-Tree::Tree() : Enemy(), attackTimer(0), attackCooldown(0), returnTimer(0) {}
+Tree::Tree()
+	: Enemy(), attackTimer(0), attackCooldown(0), returnTimer(0), attackRound(0),
+      hitsRemaining(5), hitFlashTimer(0), deathTimer(0), petalSpawnTimer(0), dying(false) {}
 
 Tree::~Tree() = default;
 
@@ -9,7 +15,7 @@ enum TreeAnims {
 };
 
 enum TreeState {
-	WANDER, RETURNING, SPAWNING_LEAVES, SHOOTING_POLLEN, DROPPING_BOMBS
+   WANDER, RETURNING, ATTACKING
 };
 
 void Tree::init() {
@@ -35,58 +41,91 @@ void Tree::init() {
 	attackTimer = 0;
 	attackCooldown = 0;
 	returnTimer = 0;
+	attackRound = 0;
+  hitsRemaining = 5;
+	hitFlashTimer = 0;
+	deathTimer = 0;
+  petalSpawnTimer = 0;
+	dying = false;
+	pollen.clear();
+	petals.clear();
+	leaves.clear();
 	initialPos = posEnemy;
 }
 
+bool Tree::onBombHit(const BombManager& bombs) {
+	for (auto it = leaves.begin(); it != leaves.end();) {
+		if ((*it)->onBombHit(bombs))
+			it = leaves.erase(it);
+		else
+			++it;
+	}
+
+	if (dying)
+       return deathTimer >= 5000;
+	if (hitFlashTimer == 0 && bombs.hits(posEnemy + getCollisionOffset(), getCollisionSize())) {
+		--hitsRemaining;
+        hitFlashTimer = 2000;
+	}
+	return false;
+}
+
 void Tree::updateMovement() {
-	int tileSize = map->getTileSize();
-	glm::ivec2 mapSize = map->getMapSize();
-	int mapMargin = tileSize; // 1 tile margin from edges
+  const int tileSize = map->getTileSize();
+	const glm::ivec2 mapPixels = map->getMapPixelSize();
+	const int minX = tileSize;
+	const int maxX = mapPixels.x - enemySize.x - tileSize;
+	const int minY = tileSize;
+	const int maxY = mapPixels.y - enemySize.y - tileSize;
 
-	// Clamp tree to bounds with margin
-	int minX = mapMargin;
-	int maxX = (mapSize.x * tileSize) - enemySize.x - mapMargin;
-	int minY = mapMargin;
-	int maxY = (mapSize.y * tileSize) - enemySize.y - mapMargin;
+	for (auto it = pollen.begin(); it != pollen.end();) {
+		if (!(*it)->update(16, mapPixels))
+			it = pollen.erase(it);
+		else
+			++it;
+	}
+	for (auto& leaf : leaves)
+		leaf->update(16);
+  for (auto it = petals.begin(); it != petals.end();) {
+		if (!(*it)->update(lastDeltaTime, mapPixels))
+			it = petals.erase(it);
+		else
+			++it;
+	}
 
-	// Update attack cooldown
-	if (attackCooldown > 0) {
+	if (dying) {
+       deathTimer += lastDeltaTime;
+		petalSpawnTimer += lastDeltaTime;
+		if (petalSpawnTimer >= 200) {
+			petalSpawnTimer -= 200;
+			spawnPetal();
+     }
+		return;
+	}
+
+	if (attackCooldown > 0)
 		--attackCooldown;
+
+	if (hitFlashTimer > 0) {
+        hitFlashTimer = std::max(0, hitFlashTimer - lastDeltaTime);
+		if (hitsRemaining == 0) {
+			beginDeath();
+		}
+		return;
 	}
 
 	if (state == WANDER) {
-		// Wander towards player in both X and Y
-		glm::vec2 playerPos = player->getPosition();
-		int treeCenterX = posEnemy.x + enemySize.x / 2;
-		int treeCenterY = posEnemy.y + enemySize.y / 2;
-		int playerCenterX = int(playerPos.x) + 32; // Player size is 64x64
-		int playerCenterY = int(playerPos.y) + 32;
+		const glm::vec2 playerPos = player->getPosition();
+		const int treeCenterX = posEnemy.x + enemySize.x / 2;
+		const int treeCenterY = posEnemy.y + enemySize.y / 2;
+		const int playerCenterX = int(playerPos.x) + SIZE_PLAYER.x / 2;
+		const int playerCenterY = int(playerPos.y) + SIZE_PLAYER.y / 2;
+		posEnemy.x += (treeCenterX < playerCenterX) ? 1 : (treeCenterX > playerCenterX ? -1 : 0);
+		posEnemy.y += (treeCenterY < playerCenterY) ? 1 : (treeCenterY > playerCenterY ? -1 : 0);
+		posEnemy.x = std::max(minX, std::min(maxX, posEnemy.x));
+		posEnemy.y = std::max(minY, std::min(maxY, posEnemy.y));
 
-		// Move towards player X
-		if (treeCenterX < playerCenterX) {
-			posEnemy.x += 1;
-		} else if (treeCenterX > playerCenterX) {
-			posEnemy.x -= 1;
-		}
-
-		// Move towards player Y
-		if (treeCenterY < playerCenterY) {
-			posEnemy.y += 1;
-		} else if (treeCenterY > playerCenterY) {
-			posEnemy.y -= 1;
-		}
-
-		// Keep within bounds
-		if (posEnemy.x < minX) posEnemy.x = minX;
-		if (posEnemy.x > maxX) posEnemy.x = maxX;
-		if (posEnemy.y < minY) posEnemy.y = minY;
-		if (posEnemy.y > maxY) posEnemy.y = maxY;
-
-		++timer;
-
-		// Decide to attack after some time
-		if (timer > 360 && attackCooldown == 0) {
-			// Before attacking, need to return to initial position
+		if (++timer > 360 && attackCooldown == 0) {
 			targetPos = initialPos;
 			state = RETURNING;
 			returnTimer = 0;
@@ -94,69 +133,104 @@ void Tree::updateMovement() {
 		}
 	}
 	else if (state == RETURNING) {
-		// Move towards initial position X
-		if (posEnemy.x < initialPos.x) {
-			posEnemy.x += 2; // Faster speed
-		} else if (posEnemy.x > initialPos.x) {
-			posEnemy.x -= 2; // Faster speed
-		}
+		if (posEnemy.x < initialPos.x) posEnemy.x = std::min(initialPos.x, posEnemy.x + 2);
+		else if (posEnemy.x > initialPos.x) posEnemy.x = std::max(initialPos.x, posEnemy.x - 2);
+		if (posEnemy.y < initialPos.y) posEnemy.y = std::min(initialPos.y, posEnemy.y + 2);
+		else if (posEnemy.y > initialPos.y) posEnemy.y = std::max(initialPos.y, posEnemy.y - 2);
+		posEnemy.x = std::max(minX, std::min(maxX, posEnemy.x));
+		posEnemy.y = std::max(minY, std::min(maxY, posEnemy.y));
 
-		// Move towards initial position Y
-		if (posEnemy.y < initialPos.y) {
-			posEnemy.y += 2; // Faster speed
-		} else if (posEnemy.y > initialPos.y) {
-			posEnemy.y -= 2; // Faster speed
-		}
-
-		// Keep within bounds
-		if (posEnemy.x < minX) posEnemy.x = minX;
-		if (posEnemy.x > maxX) posEnemy.x = maxX;
-		if (posEnemy.y < minY) posEnemy.y = minY;
-		if (posEnemy.y > maxY) posEnemy.y = maxY;
-
-		// Check if reached initial position (within 4 pixels tolerance)
 		if (abs(posEnemy.x - initialPos.x) <= 4 && abs(posEnemy.y - initialPos.y) <= 4) {
-			// Reached initial position, execute attack
-			int attackType = (timer / 60) % 4;
-
-			switch (attackType) {
-			case 0: // Leaf attack
-				sprite->changeAnimation(ATTACK);
-				state = SPAWNING_LEAVES;
-				break;
-			case 1: // Pollen attack
-				sprite->changeAnimation(ATTACK);
-				state = SHOOTING_POLLEN;
-				break;
-			case 2: // Bomb rain attack
-				sprite->changeAnimation(ATTACK);
-				state = DROPPING_BOMBS;
-				break;
-			default: // Return to wander
-				sprite->changeAnimation(IDLE);
-				state = WANDER;
-				break;
-			}
-
+			posEnemy = initialPos;
+			state = ATTACKING;
+			attackRound = 0;
 			attackTimer = 0;
-			attackCooldown = 240; // Cooldown before next attack
-			timer = 0;
+			sprite->changeAnimation(ATTACK);
+			startPollenRound();
 		}
-
 		++returnTimer;
 	}
-	// Attack states - return to wander after animation completes
-	else if (state == SPAWNING_LEAVES || state == SHOOTING_POLLEN || state == DROPPING_BOMBS) {
-		++attackTimer;
-
-		if (attackTimer > 180) {
-			sprite->changeAnimation(IDLE);
+	else if (state == ATTACKING && ++attackTimer >= 30) {
+		attackTimer = 0;
+		++attackRound;
+		if (attackRound == 1) {
+			startPollenRound();
+		}
+		else if (attackRound == 2) {
+			startLeafRound();
+		}
+		else {
 			state = WANDER;
+			attackCooldown = 240;
 			timer = 0;
+			sprite->changeAnimation(IDLE);
 		}
 	}
+}
 
-	printf("Tree State: %d, Attack Timer: %d, Attack Cooldown: %d, Position: (%d,%d), Target position:(%d,%d)\n", state, attackTimer, attackCooldown, posEnemy.x, posEnemy.y, targetPos.x, targetPos.y);
+void Tree::startPollenRound() {
+	const glm::ivec2 mapPixels = map->getMapPixelSize();
+	const glm::vec2 center(mapPixels.x / 2.f - 8.f, mapPixels.y / 2.f - 4.f);
+	const glm::vec2 directions[] = {
+		glm::vec2(-1.f, -1.f), glm::vec2(1.f, -1.f),
+		glm::vec2(-1.f, 1.f), glm::vec2(1.f, 1.f)
+	};
+	for (const glm::vec2& direction : directions)
+		pollen.push_back(std::make_unique<Pollen>(center, direction, texProgram));
+}
+
+void Tree::startLeafRound() {
+  if (!leaves.empty())
+		return;
+	for (int direction = -1; direction <= 1; direction += 2) {
+		auto leaf = std::make_unique<LeafEnemy>(direction);
+     leaf->Enemy::init(posEnemy, map, player, texProgram);
+		leaves.push_back(std::move(leaf));
+	}
+}
+
+void Tree::beginDeath() {
+	dying = true;
+	deathTimer = 0;
+	petalSpawnTimer = 0;
+	pollen.clear();
+	sprite->changeAnimation(EXPLODE);
+	for (auto& leaf : leaves)
+		leaf->startExploding();
+	spawnPetal();
+}
+
+void Tree::spawnPetal() {
+	const glm::ivec2 mapPixels = map->getMapPixelSize();
+	const int x = std::max(0, std::min(mapPixels.x - 32,
+		posEnemy.x - 32 + std::rand() % (enemySize.x + 64)));
+	const int y = std::max(0, std::min(mapPixels.y - 32,
+		posEnemy.y - 32 + std::rand() % (enemySize.y + 64)));
+   petals.push_back(std::make_unique<Pollen>(glm::vec2(x, y), glm::vec2(0.f, 0.f), texProgram, 1500));
+}
+
+void Tree::render(const glm::mat4& view) {
+    if (dying || hitFlashTimer == 0 || (hitFlashTimer / 80) % 2 != 0)
+		Enemy::render(view);
+	for (const auto& bullet : pollen)
+		bullet->render(view);
+	for (const auto& leaf : leaves)
+		leaf->render(view);
+   for (const auto& petal : petals)
+		petal->render(view);
+}
+
+bool Tree::hitsPlayer() const {
+	const glm::ivec2 playerPosition(player->getPosition());
+	for (const auto& bullet : pollen) {
+		if (bullet->hitsPlayer(playerPosition))
+			return true;
+	}
+	for (const auto& leaf : leaves) {
+		if (leaf->hitsPlayer())
+			return true;
+	}
+	return false;
 }
 
 glm::ivec2 Tree::getCollisionSize() const {

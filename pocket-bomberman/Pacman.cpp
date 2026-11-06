@@ -5,9 +5,9 @@ Pacman::Pacman() : Enemy() {}
 Pacman::~Pacman() = default;
 
 enum PacmanAnims {
+	EXPLODE,
 	MOVE_LEFT, DASH_LEFT,
 	MOVE_RIGHT, DASH_RIGHT,
-	EXPLODE
 };
 
 void Pacman::init() {

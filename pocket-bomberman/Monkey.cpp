@@ -5,7 +5,7 @@ Monkey::Monkey() : Enemy() {}
 Monkey::~Monkey() = default;
 
 enum monkeyAnims {
-	MOVE, EXPLODE
+	EXPLODE, MOVE
 };
 
 enum monkeyState {

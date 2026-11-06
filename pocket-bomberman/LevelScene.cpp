@@ -63,29 +63,24 @@ void LevelScene::updateObjects(int deltaTime, int currentTime)
 
 	gui->setEnemyCount(enemies.size());
 
+
 	player->update(deltaTime);
 
-	const glm::vec2 p = player->getPosition();
-	const glm::ivec2 boxPos = glm::ivec2(p) + PLAYER_COLLISION_OFFSET;
 
-	if (!isGameOver && Game::instance().isKeyPressedOnce(CONFIRM_KEY)) {
-		// Tile under the player's feet, horizontally centered
-		glm::ivec2 feet(int(p.x) + SIZE_PLAYER.x / 2, int(p.y) + SIZE_PLAYER.y - 1);
-		bombs->tryPlace(map->pixel2Tile(feet));
-	}
+	const glm::vec2 playerPos = player->getPosition();
+	const glm::ivec2 feet(int(playerPos.x) + SIZE_PLAYER.x / 2, int(playerPos.y) + SIZE_PLAYER.y - 1);
+	const glm::ivec2 boxPos = glm::ivec2(playerPos) + PLAYER_COLLISION_OFFSET;
 
-	bombs->update(deltaTime, boxPos, SIZE_PLAYER_COLLISION);
+	if (!isGameOver) bombs->update(deltaTime, boxPos, feet, SIZE_PLAYER_COLLISION);
 
-	// Explosion kills the player
-	if (!isGameOver && bombs->hits(boxPos, SIZE_PLAYER_COLLISION)) {
+	if (!isGameOver && bombs->hits(boxPos, SIZE_PLAYER_COLLISION) && !player->isGodMode()) {
 		isGameOver = true;
 		player->setDead();
 	}
 
-	// Explosion kills enemies
 	enemies.erase(std::remove_if(enemies.begin(), enemies.end(),
 		[&](const std::unique_ptr<Enemy>& e) {
-			return bombs->hits(glm::ivec2(e->getPosition()) + e->getCollisionOffset(), e->getCollisionSize());
+          return e->onBombHit(*bombs);
 		}), enemies.end());
 
 	cam->setTarget(player->getPosition());
@@ -140,8 +135,12 @@ glm::vec2 LevelScene::getInitialPlayerTilePos() const {
 }
 
 bool LevelScene::enemyPlayerCollision() const {
+	if (player->isGodMode()) return false;
+
 	const glm::ivec2 playerBox = glm::ivec2(player->getPosition()) + PLAYER_COLLISION_OFFSET;
 	for (const auto& enemy : enemies) {
+       if (enemy->hitsPlayer())
+			return true;
 		const glm::ivec2 enemyBox = glm::ivec2(enemy->getPosition()) + enemy->getCollisionOffset();
 		if (playerBox.x < enemyBox.x + enemy->getCollisionSize().x &&
 			playerBox.x + SIZE_PLAYER_COLLISION.x > enemyBox.x &&

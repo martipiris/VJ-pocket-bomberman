@@ -18,6 +18,7 @@
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="GUI.h" />
     <ClInclude Include="InstructionsScene.h" />
+    <ClInclude Include="LeafEnemy.h" />
     <ClInclude Include="Level1.h" />
     <ClInclude Include="Level2.h" />
     <ClInclude Include="Level3.h" />
@@ -36,6 +37,7 @@
     <ClInclude Include="libs\TileMap.h" />
     <ClInclude Include="Monkey.h" />
     <ClInclude Include="Pacman.h" />
+    <ClInclude Include="Pollen.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="StartingScene.h" />
@@ -50,6 +52,7 @@
     <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="GUI.cpp" />
     <ClCompile Include="InstructionsScene.cpp" />
+    <ClCompile Include="LeafEnemy.cpp" />
     <ClCompile Include="Level1.cpp" />
     <ClCompile Include="Level2.cpp" />
     <ClCompile Include="Level3.cpp" />
@@ -68,6 +71,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Monkey.cpp" />
     <ClCompile Include="Pacman.cpp" />
+    <ClCompile Include="Pollen.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="StartingScene.cpp" />

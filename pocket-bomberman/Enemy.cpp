@@ -1,4 +1,6 @@
 #include "Enemy.h"
+#include "Enemy.h"
+#include "BombManager.h"
 
 Enemy::Enemy() {}
 
@@ -18,14 +20,42 @@ void Enemy::init(const glm::ivec2& tileMapPos, TileMap* tileMap, Player* player,
 }
 
 void Enemy::update(int deltaTime) {
+  lastDeltaTime = deltaTime;
 	sprite->update(deltaTime);
-
-	updateMovement();
+	if (exploding) {
+		explosionTimer++;
+		updateWhileExploding(deltaTime);
+	}
+	else {
+		updateMovement();
+	}
 	sprite->setPosition(posEnemy);
 }
 
 void Enemy::render(const glm::mat4& view) {
-	if (sprite) sprite->render(view);
+	sprite->render(view);
+}
+
+bool Enemy::hitsPlayer() const {
+	return false;
+}
+
+bool Enemy::onBombHit(const BombManager& bombs) {
+	const glm::ivec2 hitPosition = posEnemy + getCollisionOffset();
+    if (!exploding && bombs.hits(hitPosition, getCollisionSize()))
+		startExploding();
+	return exploding && explosionTimer >= 30;
+}
+
+void Enemy::startExploding() {
+	if (exploding)
+		return;
+	exploding = true;
+	explosionTimer = 0;
+	sprite->changeAnimation(0);
+}
+
+void Enemy::updateWhileExploding(int deltaTime) {
 }
 
 glm::vec2 Enemy::getPosition() const {

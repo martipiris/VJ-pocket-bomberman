@@ -20,8 +20,11 @@ bool BombManager::tryPlace(const glm::ivec2& tile)
 	return true;
 }
 
-void BombManager::update(int deltaTime, const glm::ivec2& boxPos, const glm::ivec2& boxSize)
+void BombManager::update(int deltaTime, const glm::ivec2& boxPos, const glm::ivec2& feet, const glm::ivec2& boxSize)
 {
+	if (Game::instance().isKeyPressedOnce(CONFIRM_KEY))
+		tryPlace(map->pixel2Tile(feet));
+
 	for (auto& b : bombs) {
 		if (b->update(deltaTime))
 			b->detonate(computeBlast(*b));

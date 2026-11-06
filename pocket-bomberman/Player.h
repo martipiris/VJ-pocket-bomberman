@@ -23,6 +23,7 @@ public:
 	void setPosition(const glm::vec2 &pos);
 	
 	glm::vec2 getPosition() const;
+	bool isGodMode() const;
 
 	void setDead();
 private:
@@ -46,6 +47,7 @@ private:
 
 	// State
 	bool isDead = false;
+	bool godMode = false;
 
 	void updateMovement(int deltaTime);
 };
