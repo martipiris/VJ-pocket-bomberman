@@ -27,7 +27,7 @@ public:
 	void setInvincible(int ms);
 	bool isInvincible() const { return invincibleTimer > 0; }
 
-	void setDead();
+	void setDead(bool exploded);
 private:
 	// Physics
 	glm::vec2 posPlayerF;    
@@ -50,6 +50,8 @@ private:
 	// Player states variables
 	bool isDead = false;
 	int invincibleTimer = 0;
+	int deadTimer = 300;
+
 	void updateMovement(int deltaTime);
 };
 

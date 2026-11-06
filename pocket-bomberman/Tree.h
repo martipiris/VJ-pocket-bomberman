@@ -18,6 +18,7 @@ public:
 	void render(const glm::mat4& view) override;
 	bool hitsPlayer() const override;
 	bool onBombHit(const BombManager& bombs) override;
+	void startExploding() override;
 
 	glm::ivec2 getCollisionSize() const override;
 	glm::ivec2 getCollisionOffset() const override;

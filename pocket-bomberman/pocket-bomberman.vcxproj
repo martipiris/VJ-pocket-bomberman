@@ -11,6 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AudioManager.h" />
     <ClInclude Include="Bomb.h" />
     <ClInclude Include="BombManager.h" />
     <ClInclude Include="Camera.h" />
@@ -35,6 +36,7 @@
     <ClInclude Include="libs\Texture.h" />
     <ClInclude Include="libs\TexturedQuad.h" />
     <ClInclude Include="libs\TileMap.h" />
+    <ClInclude Include="libs\miniaudio\miniaudio.h" />
     <ClInclude Include="Monkey.h" />
     <ClInclude Include="Pacman.h" />
     <ClInclude Include="Pollen.h" />
@@ -49,6 +51,7 @@
     <ClInclude Include="Tree.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AudioManager.cpp" />
     <ClCompile Include="Bomb.cpp" />
     <ClCompile Include="BombManager.cpp" />
     <ClCompile Include="Camera.cpp" />

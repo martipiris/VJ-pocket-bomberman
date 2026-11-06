@@ -5,6 +5,7 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
+#include "AudioManager.h"
 #include "Scene.h"
 
 
@@ -51,6 +52,7 @@ public:
 	bool isKeyPressedOnce(int key);
 
 	void changeScene(int scene);
+	AudioManager& audio() { return audioManager; }
 
 private:
 	bool bPlay; // Continue to play game?
@@ -58,6 +60,7 @@ private:
 	bool keysProcessed[GLFW_KEY_LAST + 1];
 
 	Scene* scene;
+  AudioManager audioManager;
 };
 
 #endif // _GAME_INCLUDE

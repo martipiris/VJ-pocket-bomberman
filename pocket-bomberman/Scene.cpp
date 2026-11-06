@@ -10,6 +10,7 @@ void Scene::init()
 {
 	projection = glm::ortho(0.f, float(SCREEN_WIDTH), float(SCREEN_HEIGHT), 0.f);
 	currentTime = 0.0f;
+
 	initShaders();
 	initObjects();
 }
@@ -31,8 +32,6 @@ void Scene::update(int deltaTime)
 	} else if (Game::instance().isKeyPressedOnce(GLFW_KEY_5)) {
 		Game::instance().changeScene(LV5);
 	}
-
-	
 }
 
 void Scene::render()
@@ -51,6 +50,10 @@ void Scene::render()
 
 void Scene::deleteScene() {
 	texProgram.free();
+
+	if (Game::instance().audio().isSoundPlaying(musicId))
+		Game::instance().audio().stopSound(musicId);
+
 	deleteObjects();
 }
 

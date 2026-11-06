@@ -61,11 +61,15 @@ bool Tree::onBombHit(const BombManager& bombs) {
 			++it;
 	}
 
-	if (dying)
-       return deathTimer >= 5000;
+	if (dying && deathTimer >= 5000) {
+		Game::instance().audio().playSound("tree_die");
+		return true;
+	}
+       
 	if (hitFlashTimer == 0 && bombs.hits(posEnemy + getCollisionOffset(), getCollisionSize())) {
 		--hitsRemaining;
         hitFlashTimer = 2000;
+		Game::instance().audio().playSound("hit_enemy");
 	}
 	return false;
 }
@@ -85,7 +89,7 @@ void Tree::updateMovement() {
 			++it;
 	}
 	for (auto& leaf : leaves)
-		leaf->update(16);
+		leaf->update(16, false);
   for (auto it = petals.begin(); it != petals.end();) {
 		if (!(*it)->update(lastDeltaTime, mapPixels))
 			it = petals.erase(it);
@@ -96,8 +100,8 @@ void Tree::updateMovement() {
 	if (dying) {
        deathTimer += lastDeltaTime;
 		petalSpawnTimer += lastDeltaTime;
-		if (petalSpawnTimer >= 200) {
-			petalSpawnTimer -= 200;
+		if (petalSpawnTimer >= 100) {
+			petalSpawnTimer -= 100;
 			spawnPetal();
      }
 		return;
@@ -183,17 +187,26 @@ void Tree::startPollenRound() {
 	};
 	for (const glm::vec2& direction : directions)
 		pollen.push_back(std::make_unique<Pollen>(center, direction, texProgram));
+
+	Game::instance().audio().playSound("pollen_shoot");
 }
 
 // Leaf attack
 void Tree::startLeafRound() {
-  if (!leaves.empty())
+	if (!leaves.empty())
 		return;
+
 	for (int direction = -1; direction <= 1; direction += 2) {
 		auto leaf = std::make_unique<LeafEnemy>(direction);
      leaf->Enemy::init(posEnemy, map, player, texProgram);
 		leaves.push_back(std::move(leaf));
 	}
+
+	Game::instance().audio().playSound("spawn_leaves");
+}
+
+void Tree::startExploding() {
+	beginDeath();
 }
 
 // Boss death animation
@@ -214,7 +227,9 @@ void Tree::spawnPetal() {
 		posEnemy.x - 32 + std::rand() % (enemySize.x + 64)));
 	const int y = std::max(0, std::min(mapPixels.y - 32,
 		posEnemy.y - 32 + std::rand() % (enemySize.y + 64)));
-   petals.push_back(std::make_unique<Pollen>(glm::vec2(x, y), glm::vec2(0.f, 0.f), texProgram, 1500));
+   petals.push_back(std::make_unique<Pollen>(glm::vec2(x, y), glm::vec2(0.f, 0.f), texProgram, 700));
+
+   Game::instance().audio().playSound("tree_explosion");
 }
 
 void Tree::render(const glm::mat4& view) {

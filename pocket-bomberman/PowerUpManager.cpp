@@ -1,5 +1,6 @@
 #include <iostream>
 #include "PowerUpManager.h"
+#include "Game.h"
 
 PowerUpManager::PowerUpManager(TileMap* map, ShaderProgram& program, int dropPercent)
 	: map(map), program(program), dropPercent(dropPercent), rng(std::random_device{}())
@@ -51,6 +52,7 @@ std::vector<PowerUpType> PowerUpManager::collect(const glm::ivec2& boxPos, const
 		if ((*it)->overlaps(boxPos, boxSize)) {
 			got.push_back((*it)->getType());
 			it = powerUps.erase(it);
+			Game::instance().audio().playSound("powerup");
 		}
 		else {
 			++it;

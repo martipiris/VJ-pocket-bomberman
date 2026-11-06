@@ -6,7 +6,7 @@ namespace {
 	const int MAX_SPEED_LEVEL = 5;
 }
 
-Stats::Stats() : heart(false), lives(3), bombAmount(1), bombRange(1), speedLevel(0) {}
+Stats::Stats() : heart(false), lives(2), bombAmount(1), bombRange(1), speedLevel(0) {}
 
 //Necessary checks for different stats
 bool Stats::hasHeart() { return heart; }
@@ -19,7 +19,7 @@ void Stats::setHeart(bool heart) { this->heart = heart; }
 
 //Lives handlets
 void Stats::decreaseLives() { --lives; }
-void Stats::resetLives() { lives = 3; }
+void Stats::resetLives() { lives = 2; }
 
 //Maximum bombs handlers
 void Stats::increaseBombAmount() { if (bombAmount < MAX_BOMB_AMOUNT) ++bombAmount; }

@@ -15,7 +15,7 @@ public:
 	bool hits(const glm::ivec2& boxPos, const glm::ivec2& boxSize) const;
 
 	bool tryPlace(const glm::ivec2& tile);
-	void update(int deltaTime, const glm::ivec2& boxPos, const glm::ivec2& feet, const glm::ivec2& boxSize);
+	void update(bool isGameOver, int deltaTime, const glm::ivec2& boxPos, const glm::ivec2& feet, const glm::ivec2& boxSize);
 	void render(const glm::mat4& view);
 
 	int available() const { return maximum() - int(bombs.size()); }

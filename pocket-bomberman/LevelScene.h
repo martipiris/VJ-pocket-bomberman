@@ -76,11 +76,11 @@ private:
 	bool isGameOver = false;
 	bool doorOpened = false;
 
-
-	int gameOverTimer = 120;
+	int gameOverTimer = 30;
+	AudioManager::SoundId jingleID = 0;
 
 	bool enemyPlayerCollision() const;
-	void hurtPlayer();
+	void hurtPlayer(bool exploded);
 
     //All diferent states the level scene can be, boils down to either mid transition or not
 	enum Phase { INTRO_HOLD, INTRO_REVEAL, PLAYING, OUTRO_WIPE, OUTRO_HOLD };
@@ -96,6 +96,8 @@ private:
 	void updateTransition(int deltaTime, int currentTime);
 	void renderTransition();
 	glm::vec2 introTextPos() const;
+
+	virtual void playSceneMusic();
 };
 
 

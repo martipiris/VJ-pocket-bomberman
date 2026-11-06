@@ -4,7 +4,7 @@
 
 #include <glm/glm.hpp>
 #include "libs/ShaderProgram.h"
-
+#include "AudioManager.h"
 
 // Scene contains all the entities of our game.
 // It is responsible for updating and render them.
@@ -31,6 +31,8 @@ protected:
 	ShaderProgram texProgram, simpleProgram;
 	float currentTime;
 	glm::mat4 projection;
+
+	AudioManager::SoundId musicId;
 
 	void initShaders();
 };

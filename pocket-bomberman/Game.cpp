@@ -8,6 +8,7 @@
 #include "Level3.h"
 #include "Level4.h"
 #include "Level5.h"
+#include <iostream>
 
 Game::Game() {}
 
@@ -15,6 +16,8 @@ void Game::init()
 {
 	glDepthFunc(GL_LEQUAL);
 	bPlay = true;
+   if (!audioManager.initialize())
+		std::cerr << "Failed to initialize audio output.\n";
 	glClearColor(1, 1, 1, 1);
 	scene = new StartingScene();
 	scene->init();
@@ -23,6 +26,7 @@ void Game::init()
 bool Game::update(int deltaTime)
 {
 	scene->update(deltaTime);
+	audioManager.update();
 
 	return bPlay;
 }
