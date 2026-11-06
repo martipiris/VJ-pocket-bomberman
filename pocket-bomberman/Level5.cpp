@@ -12,3 +12,7 @@ void Level5::onLevelUpdate(int deltaTime) {
 void Level5::onLevelRender() {
 
 }
+
+void Level5::playSceneMusic() {
+	musicId = Game::instance().audio().playSound("boss_theme", true);
+}

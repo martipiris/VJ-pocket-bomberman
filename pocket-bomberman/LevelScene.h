@@ -74,7 +74,6 @@ private:
 	bool isGameOver = false;
 	bool doorOpened = false;
 
-
 	int gameOverTimer = 120;
 
 	bool enemyPlayerCollision() const;
@@ -91,6 +90,8 @@ private:
 	void updateTransition(int deltaTime, int currentTime);
 	void renderTransition();
 	glm::vec2 introTextPos() const;
+
+	virtual void playSceneMusic();
 };
 
 

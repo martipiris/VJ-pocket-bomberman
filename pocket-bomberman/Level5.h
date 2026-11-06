@@ -30,8 +30,11 @@ private:
 	void onLevelInit() override;
 	void onLevelUpdate(int deltaTime) override;
 	void onLevelRender() override;
+
 	std::string introTitle() const override { return "STAGE BOSS"; }
 	int nextLevelId() const override { return CREDITS; };
+
+	void playSceneMusic() override;
 };
 
 #endif // _LEVEL4_INCLUDE

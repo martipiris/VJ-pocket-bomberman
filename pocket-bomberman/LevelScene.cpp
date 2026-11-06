@@ -241,6 +241,7 @@ void LevelScene::updateTransition(int deltaTime, int currentTime)
 			phase = PLAYING;
 			phaseTimer = 0;
 			playStartTime = currentTime;   // the level clock starts now
+			playSceneMusic();
 		}
 		break;
 	case OUTRO_WIPE:
@@ -257,7 +258,6 @@ void LevelScene::updateTransition(int deltaTime, int currentTime)
 
 void LevelScene::renderTransition()
 {
-
 	switch (phase) {
 	case INTRO_HOLD:
 		wipe->drawSector(0.f, 1.f, WIPE_COLOR);
@@ -286,4 +286,8 @@ glm::vec2 LevelScene::introTextPos() const
 {
 	const float width = introText->getWidth(introTitle(), INTRO_TEXT_SIZE);
 	return glm::vec2((SCREEN_WIDTH - width) * 0.5f, 250.f);
+}
+
+void LevelScene::playSceneMusic() {
+	musicId = Game::instance().audio().playSound("forest_area", true);
 }

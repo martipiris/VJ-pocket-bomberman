@@ -80,6 +80,8 @@ void StartingScene::initObjects() {
 
 	texs[3].loadFromFile("images/title_spritesheet.png", TEXTURE_PIXEL_FORMAT_RGBA);
 	texs[3].setMagFilter(GL_NEAREST);
+
+	musicId = Game::instance().audio().playSound("title_screen", true);
 }
 
 void StartingScene::updateObjects(int deltaTime, int currentTime) {
