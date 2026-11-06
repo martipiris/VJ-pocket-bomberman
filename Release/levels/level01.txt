@@ -1,0 +1,21 @@
+TILEMAP
+16 15    						-- Size of tile map in tiles
+64 64							-- Tile size & block size
+images/level_spritesheet.png 	-- Tilesheet
+8 4 						    -- Number of tiles in tilesheet
+5666666666666667
+D  4     4   4 D
+D              D
+D              D
+D              D
+D 123 1349B  C D
+D       1IJ  K D
+D        8J  K4D
+DL   12222R 1Q3D
+D              D
+D13            D
+D   L      13  D
+D              D
+D4       4     D
+DTTTTTTTTTTTTTTD
+
