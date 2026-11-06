@@ -48,7 +48,9 @@ protected:
 	virtual void onLevelRender() {}
 	virtual int nextLevelId() const = 0;
 
+	virtual bool showExitHint() const { return true; }
 	virtual std::string introTitle() const { return "STAGE"; }
+	void startOutro();  
 
 	TileMap *map = nullptr;
 	Player *player = nullptr;
@@ -85,8 +87,10 @@ private:
 	int phaseTimer = 0;       // ms spent in the current phase
 	int playStartTime = 0;    // Scene::currentTime when gameplay began
 
-	ScreenWipe *wipe = nullptr;
-	Text *introText = nullptr;
+	ScreenWipe* wipe = nullptr;
+	Text* introText = nullptr;
+	Text* exitText = nullptr;
+	int exitTimer = 0;   // ms of flashing left
 
 	void updateTransition(int deltaTime, int currentTime);
 	void renderTransition();
